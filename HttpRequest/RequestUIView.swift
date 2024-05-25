@@ -71,10 +71,10 @@ struct RequestUIView: View {
             }
             Spacer()
             TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
-                Text("Tab Content 1").tabItem { Text("Auth") }.tag(1)
-                Text("Tab Content 2").tabItem { Text("Body") }.tag(2)
-                Text("Tab Content 2").tabItem { Text("Headers") }.tag(3)
-                Text("Tab Content 2").tabItem { Text("Parameters") }.tag(4)
+                AuthorizationUIView().tabItem { Text("Auth") }.tag(1)
+                BodyUIView().tabItem { Text("Body") }.tag(2)
+                HeadersUIView().tabItem { Text("Headers") }.tag(3)
+                ParametersUIView().tabItem { Text("Parameters") }.tag(4)
             }
             if !loadingHttpRequest {
                 StatsView(responseObject: responseObject)
