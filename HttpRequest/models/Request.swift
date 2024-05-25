@@ -8,47 +8,53 @@
 import Foundation
 
 struct Parameter: Codable {
-    let key: String;
-    let value: String;
+    var key: String;
+    var value: String;
 }
 
 struct Header: Codable {
-    let key: String;
-    let value: String;
+    var key: String;
+    var value: String;
 }
 
 struct Variable: Codable {
-    let key: String;
-    let value: String;
-}
-
-//AuthorizationTypes {
-//    
-//}
-
-struct Authorization: Codable {
-    let type: String
+    var key: String;
+    var value: String;
 }
 
 struct Request: Identifiable, Codable {
     var id = UUID()
-    let method: String;
-    let url: String;
-    let parameters: Array<Parameter>;
-    let body: String;
-    let headers: Array<Header>
-    let authorization: Authorization;
-    let tests: String;
-    let variables: Array<Variable>;
+    var method: String;
+    var urlProtocol: String;
+    var url: String;
+    var parameters: Array<Parameter>;
+    var body: String;
+    var headers: Array<Header>
+    //var authorization: Authorization;
+    var tests: String;
+    var variables: Array<Variable>;
     
-    init(method: String, url: String, parameters: Array<Parameter>, body: String, headers: Array<Header>, authorization: Authorization, tests: String, variables: Array<Variable>) {
+    init(method: String, urlProtocol: String, url: String, parameters: Array<Parameter>, body: String, headers: Array<Header>, authorization: Authorization, tests: String, variables: Array<Variable>) {
         self.method = method
+        self.urlProtocol = urlProtocol
         self.url = url
         self.parameters = parameters
         self.body = body
         self.headers = headers
-        self.authorization = authorization
+        //self.authorization = authorization
         self.tests = tests
         self.variables = variables
+    }
+    
+    init() {
+        self.method = ""
+        self.urlProtocol = ""
+        self.url = ""
+        self.parameters = []
+        self.body = ""
+        self.headers = []
+        //self.authorization = authorization
+        self.tests = ""
+        self.variables = []
     }
 }

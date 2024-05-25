@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4F4F4F362C02129700E0972D /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F4F352C02129700E0972D /* Authorization.swift */; };
+		4F4F4F382C022EDB00E0972D /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F4F372C022EDB00E0972D /* Response.swift */; };
+		4F4F4F3C2C02387100E0972D /* ResponseUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F4F3B2C02387100E0972D /* ResponseUIView.swift */; };
+		4F4F4F3F2C0246BF00E0972D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F4F3E2C0246BF00E0972D /* Utils.swift */; };
 		4FDBABA72C0112BB00D185C5 /* HttpRequestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABA62C0112BB00D185C5 /* HttpRequestApp.swift */; };
 		4FDBABA92C0112BB00D185C5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABA82C0112BB00D185C5 /* ContentView.swift */; };
 		4FDBABAB2C0112BB00D185C5 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABAA2C0112BB00D185C5 /* Item.swift */; };
@@ -40,6 +44,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4F4F4F352C02129700E0972D /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
+		4F4F4F372C022EDB00E0972D /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
+		4F4F4F3B2C02387100E0972D /* ResponseUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseUIView.swift; sourceTree = "<group>"; };
+		4F4F4F3E2C0246BF00E0972D /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		4FDBABA32C0112BB00D185C5 /* HttpRequest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HttpRequest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4FDBABA62C0112BB00D185C5 /* HttpRequestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestApp.swift; sourceTree = "<group>"; };
 		4FDBABA82C0112BB00D185C5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -84,6 +92,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4F4F4F392C02385200E0972D /* views */ = {
+			isa = PBXGroup;
+			children = (
+				4F4F4F3A2C02385900E0972D /* response */,
+			);
+			path = views;
+			sourceTree = "<group>";
+		};
+		4F4F4F3A2C02385900E0972D /* response */ = {
+			isa = PBXGroup;
+			children = (
+				4F4F4F3B2C02387100E0972D /* ResponseUIView.swift */,
+			);
+			path = response;
+			sourceTree = "<group>";
+		};
+		4F4F4F3D2C02469900E0972D /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				4F4F4F3E2C0246BF00E0972D /* Utils.swift */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
 		4FDBAB9A2C0112BB00D185C5 = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +139,8 @@
 		4FDBABA52C0112BB00D185C5 /* HttpRequest */ = {
 			isa = PBXGroup;
 			children = (
+				4F4F4F3D2C02469900E0972D /* utils */,
+				4F4F4F392C02385200E0972D /* views */,
 				4FDBABDA2C01CD4100D185C5 /* models */,
 				4FDBABD72C01151800D185C5 /* services */,
 				4FDBABA62C0112BB00D185C5 /* HttpRequestApp.swift */,
@@ -159,6 +193,8 @@
 			children = (
 				4FDBABDB2C01CD4F00D185C5 /* History.swift */,
 				4FDBABDD2C01CDAD00D185C5 /* Request.swift */,
+				4F4F4F352C02129700E0972D /* Authorization.swift */,
+				4F4F4F372C022EDB00E0972D /* Response.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -297,10 +333,14 @@
 				4FDBABDE2C01CDAD00D185C5 /* Request.swift in Sources */,
 				4FDBABA92C0112BB00D185C5 /* ContentView.swift in Sources */,
 				4FDBABDC2C01CD4F00D185C5 /* History.swift in Sources */,
+				4F4F4F382C022EDB00E0972D /* Response.swift in Sources */,
 				4FDBABAB2C0112BB00D185C5 /* Item.swift in Sources */,
 				4FDBABD62C01132B00D185C5 /* MainView.swift in Sources */,
+				4F4F4F362C02129700E0972D /* Authorization.swift in Sources */,
 				4FDBABA72C0112BB00D185C5 /* HttpRequestApp.swift in Sources */,
+				4F4F4F3C2C02387100E0972D /* ResponseUIView.swift in Sources */,
 				4FDBABD92C01152800D185C5 /* HttpService.swift in Sources */,
+				4F4F4F3F2C0246BF00E0972D /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

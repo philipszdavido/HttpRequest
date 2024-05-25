@@ -92,18 +92,18 @@ struct ContentView: View {
             };
         }
         .onAppear(perform: {
-            let newRequest = Request(
-                        method: "GET",
-                        url: "http://example.com",
-                        parameters: [],
-                        body: "",
-                        headers: [],
-                        authorization: Authorization(type: "None"),
-                        tests: "",
-                        variables: []
-                    )
-            
-            modelContext.insert(History(request: newRequest))
+//            let newRequest = Request(
+//                        method: "GET",
+//                        url: "http://example.com",
+//                        parameters: [],
+//                        body: "",
+//                        headers: [],
+//                        authorization: Authorization(type: <#AuthType#>),
+//                        tests: "",
+//                        variables: []
+//                    )
+//            
+//            modelContext.insert(History(request: newRequest))
         })
     }
     
