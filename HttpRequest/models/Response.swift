@@ -15,10 +15,13 @@ class Response: ObservableObject {
     @Published
     var error: Error?
     
-    init(data: Data? = nil, response: HTTPURLResponse? = nil, error: Error? = nil) {
+    @Published var timeTaken: Int;
+    
+    init(data: Data? = nil, response: HTTPURLResponse? = nil, error: Error? = nil, timeTaken: Int = 0) {
         self.data = data
         self.response = response
         self.error = error
+        self.timeTaken = timeTaken
     }
         
     func statusCode() -> Int {
@@ -58,6 +61,15 @@ class Response: ObservableObject {
         } else {
             return ""
         }
+    }
+    
+    func size() -> Int {
+        
+        if let data = self.data {
+            return data.count
+        }
+        
+        return 0
     }
 }
 

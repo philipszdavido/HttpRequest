@@ -18,7 +18,7 @@ struct RequestUIView: View {
     
     @State private var loadingHttpRequest = false
     
-    @State private var protocolType = "https://"
+    @State private var method = "GET"
     
     var body: some View {
         VStack {
@@ -28,19 +28,19 @@ struct RequestUIView: View {
             }
             HStack {
                 
-                MenuButton(label: Text(protocolType)) {
+                MenuButton(label: Text(method)) {
                     Button(action: {
-                        protocolType = "http://"
-                        //request.protocolType = protocolType
+                        method = "GET"
+                        request.method = method
                     }) {
-                        Text("http://")
+                        Text("GET").foregroundColor(.blue)
                     }
                     
                     Button(action: {
-                        protocolType = "https://"
-                        //request.protocolType = protocolType
+                        method = "POST"
+                        request.method = method
                     }) {
-                        Text("https://")
+                        Text("POST").foregroundColor(.yellow)
                     }
                 }
                 .frame(width: 100)
@@ -49,11 +49,19 @@ struct RequestUIView: View {
                 TextField("Enter URL", text: $request.url)
                 Button(action: {
                     loadingHttpRequest = true
+                    
+                    let startTime = Date()
+                    
                     httpRequest.makeRequest(request: request) { (data: Data?, response: URLResponse?, error: Error?) in
+                        
+                        let endTime = Date()
+                        let elapsedTime = endTime.timeIntervalSince(startTime)
                         
                         responseObject.data = data;
                         responseObject.response = response as? HTTPURLResponse;
                         responseObject.error = error;
+                        responseObject.timeTaken = Int(elapsedTime)
+                        
                         loadingHttpRequest = false
                     }
                 }, label: {
@@ -68,8 +76,11 @@ struct RequestUIView: View {
                 Text("Tab Content 2").tabItem { Text("Headers") }.tag(3)
                 Text("Tab Content 2").tabItem { Text("Parameters") }.tag(4)
             }
-            TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
+            if !loadingHttpRequest {
+                StatsView(responseObject: responseObject)
                 ResponseUIView(responseObject: responseObject)
+            } else {
+                ProgressView().padding(.all, 10).frame(height: 200)
             }
 
         }
@@ -83,3 +94,16 @@ struct RequestUIView: View {
 }
 
 
+struct StatsView: View {
+    
+    @ObservedObject var responseObject: Response;
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            Text("Status: \(responseObject.statusCode())")
+            Text("Time: \(responseObject.timeTaken)")
+            Text("Size: \(responseObject.size())")
+        }
+    }
+}

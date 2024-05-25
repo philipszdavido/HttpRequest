@@ -25,7 +25,7 @@ struct Variable: Codable {
 struct Request: Identifiable, Codable {
     var id = UUID()
     var method: String;
-    var urlProtocol: String;
+    //var urlProtocol: String;
     var url: String;
     var parameters: Array<Parameter>;
     var body: String;
@@ -36,7 +36,7 @@ struct Request: Identifiable, Codable {
     
     init(method: String, urlProtocol: String, url: String, parameters: Array<Parameter>, body: String, headers: Array<Header>, authorization: Authorization, tests: String, variables: Array<Variable>) {
         self.method = method
-        self.urlProtocol = urlProtocol
+        //self.urlProtocol = urlProtocol
         self.url = url
         self.parameters = parameters
         self.body = body
@@ -48,7 +48,7 @@ struct Request: Identifiable, Codable {
     
     init() {
         self.method = ""
-        self.urlProtocol = ""
+        //self.urlProtocol = ""
         self.url = ""
         self.parameters = []
         self.body = ""

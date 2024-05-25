@@ -12,13 +12,14 @@ struct ResponseUIView: View {
     @ObservedObject var responseObject: Response
     
     var body: some View {
-        
-        ContentsView(data: responseObject.getData()).tabItem { Text("Response") }.tag(1)
-        
-        CookiesView().tabItem { Text("Cookies") }.tag(2)
-        
-        HeadersView(headers: responseObject.getHeaders()).tabItem { Text("Headers") }.tag(3)
-        
+        TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
+            
+            ContentsView(data: responseObject.getData()).tabItem { Text("Response") }.tag(1)
+            
+            CookiesView().tabItem { Text("Cookies") }.tag(2)
+            
+            HeadersView(headers: responseObject.getHeaders()).tabItem { Text("Headers") }.tag(3)
+        }
     }
     
 }
@@ -32,7 +33,7 @@ struct CookiesView: View {
         
     var body: some View {
         ScrollView {
-            Text("Cookies")
+            Text("")
         }
     }
 }
@@ -42,8 +43,25 @@ struct ContentsView: View {
     var data: String
     
     var body: some View {
-        ScrollView {
-            Text(data)
+        VStack {
+            HStack {
+                Spacer()
+            Button(action: {
+                
+            }) {
+                Text("Copy")
+            }
+            
+            Button(action: {
+                
+            }) {
+                Text("Download")
+            }
+        }
+
+            ScrollView {
+                Text(data)
+            }
         }
     }
 }
