@@ -1,93 +1,66 @@
 //
-//  MainView.swift
+//  ContentView.swift
 //  HttpRequest
 //
 //  Created by Chidume Nnamdi on 24/05/2024.
 //
 
-import Foundation
 import SwiftUI
-
-var index = 0;
-
-struct TabItem: Identifiable {
-    var id = index + 1;
-    var name: String;
-}
-
-struct HistoryItem: Identifiable {
-    var id = UUID();
-    var name: String;
-}
+import SwiftData
 
 struct MainView: View {
-    
-    @State private var tabs: [TabItem] = [
-    TabItem(name: "POST history")
-    ]
-    
-    @State private var history: [HistoryItem] = [HistoryItem(name: "POST request")]
-    
-    @State var selectedHistory: String = "";
-        
-    var body: some View {
-        HStack {
-            
-            Section {
-                TabView(selection: $selectedHistory) {
-                    List(history) { historyItem in
-                        
-                        ForEach(1...18, id:\.self) { item in
-                            Text(historyItem.name).padding(.vertical, 5.0)
-                                .onTapGesture {
-                                }
-                        }
-                        
-                    }.tabItem {
-                        Text("History")
-                    }.tag(1)
-                    Text("Collection").tabItem { Text("Collections") }.tag(2)
-                }.frame(width: 180)
-            }.padding(.all, 4)
-            
-            Section {
-                VStack {
-                    HStack {
-                        
-                        ScrollView(.horizontal, showsIndicators: true) {
-                                HStack {
-                                    ForEach(tabs) { tab in
-                                        HStack {
-                                        Text("\(tab.name)")
-                                            Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
-                                            tabs.remove(at: tab.id)
-                                        })
-                                        }.padding(6)
-                                            .border(Color.black, width: 1).cornerRadius(3.0)
-                                }
-                                
-                            }
-                        }.padding([.trailing, .top, .leading], 4.0)
-                        
-                        Image(systemName: "plus.circle.fill")
-                            .onTapGesture(perform: {
-                                tabs.append(TabItem(name: "Untitled request"))
-                            }).padding(.trailing, 4.0)
+    @Environment(\.modelContext) private var modelContext
+    @Query private var items: [Item]
 
-                        
-                    }.padding(.all, 5)
-                    Divider()
-                    ScrollView {
-                        RequestUIView()
-                    }.padding(.all, 5)
-                    Spacer()
+    var body: some View {
+        NavigationSplitView {
+            List() {
+                ForEach(items) { item in
+                    NavigationLink {
+                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                    } label: {
+                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
+                    }
                 }
-            };
+                //.onDelete(perform: deleteItems)
+            }
+#if os(macOS)
+            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+#endif
+            .toolbar {
+#if os(iOS)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    EditButton()
+                }
+#endif
+                ToolbarItem {
+                    Button(action: addItem) {
+                        Label("Add Item", systemImage: "plus")
+                    }
+                }
+            }
+        } detail: {
+            Text("Select an item")
+        }
+    }
+
+    private func addItem() {
+        withAnimation {
+            let newItem = Item(timestamp: Date())
+            modelContext.insert(newItem)
+        }
+    }
+
+    private func deleteItems(offsets: IndexSet) {
+        withAnimation {
+            for index in offsets {
+                modelContext.delete(items[index])
+            }
         }
     }
 }
 
 #Preview {
     MainView()
-        
+        .modelContainer(for: Item.self, inMemory: true)
 }

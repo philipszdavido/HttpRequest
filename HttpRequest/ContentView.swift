@@ -1,66 +1,125 @@
+
 //
-//  ContentView.swift
+//  MainView.swift
 //  HttpRequest
 //
 //  Created by Chidume Nnamdi on 24/05/2024.
 //
 
+import Foundation
 import SwiftUI
 import SwiftData
 
+var index = 0;
+
+struct TabItem: Identifiable {
+    var id = index + 1;
+    var name: String;
+}
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
 
+    @State private var tabs: [TabItem] = [
+        TabItem(name: "POST history")
+    ]
+        
+    @State var selectedHistory: String = "";
+    
+    @State private var selectedItem: History?
+    
+    @Query private var histories: [History]
+    
+    @State private var selection = Set<History>()
+    
+        
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-#endif
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-#endif
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
+        HStack {
+            
+            Section {
+                TabView(selection: $selectedHistory) {
+                    List(histories, selection: $selection) { history in
+                        
+                        //ForEach(histories) { history in
+                            
+                            Text(history.request.url)//.padding(.vertical, 5.0)
+                            
+                        //}.onDelete(perform: deleteItems)
+                        
+                    }.tabItem {
+                        Text("History")
+                    }.tag(1)
+                    
+                    Text("Collection").tabItem { Text("Collections")
+                    }.tag(2)
+                    
+                }.frame(width: 180)
+            }.padding(.all, 4)
+            
+            Section {
+                VStack {
+                    HStack {
+                        
+                        ScrollView(.horizontal, showsIndicators: true) {
+                                HStack {
+                                    ForEach(tabs) { tab in
+                                        HStack {
+                                        Text("\(tab.name)")
+                                            Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
+                                            tabs.remove(at: tab.id)
+                                        })
+                                        }.padding(6)
+                                            .border(Color.black, width: 1).cornerRadius(3.0)
+                                }
+                                
+                            }
+                        }.padding([.trailing, .top, .leading], 4.0)
+                        
+                        Image(systemName: "plus.circle.fill")
+                            .onTapGesture(perform: {
+                                tabs.append(TabItem(name: "Untitled request"))
+                                print(selectedItem)
+                            }).padding(.trailing, 4.0)
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
+                        
+                    }.padding(.all, 5)
+                    Divider()
+                    ScrollView {
+                        RequestUIView()
+                    }.padding(.all, 5)
+                    Spacer()
+                }
+            };
         }
+        .onAppear(perform: {
+            let newRequest = Request(
+                        method: "GET",
+                        url: "http://example.com",
+                        parameters: [],
+                        body: "",
+                        headers: [],
+                        authorization: Authorization(type: "None"),
+                        tests: "",
+                        variables: []
+                    )
+            
+            modelContext.insert(History(request: newRequest))
+        })
     }
-
+    
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
+                modelContext.delete(histories[index])
             }
         }
     }
+
 }
+
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: History.self, inMemory: true)
+        
 }
