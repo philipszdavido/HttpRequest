@@ -8,7 +8,10 @@
 import Foundation
 
 class HttpService {
-    func makeRequest(request: Request, completionHandler: @escaping((data: Data?, response: URLResponse?, error: Error?)) -> Void) {
+    func makeRequest(request: Request, completionHandler: @escaping((data: Data?, response: URLResponse?, error: Error?, timeInterval: TimeInterval)) -> Void) {
+
+        let startTime = Date()
+
         guard let baseURL = URL(string: request.url) else {
             return;
         }
@@ -25,7 +28,9 @@ class HttpService {
         
         urlRequest.httpMethod = request.method
         
-        urlRequest.httpBody = request.body.data(using: .utf8)
+        if !request.body.isEmpty {
+            urlRequest.httpBody = request.body.data(using: .utf8)
+        }
         
         if !request.headers.isEmpty {
             request.headers.forEach { header in
@@ -33,11 +38,15 @@ class HttpService {
             }
         }
         
-        //print(urlRequest)
+        // print(request)
         
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-                        
-            completionHandler((data, response, error))
+
+            let endTime = Date()
+
+            let elapsedTime = endTime.timeIntervalSince(startTime)
+
+            completionHandler((data, response, error, elapsedTime))
             
         }.resume()
 

@@ -15,9 +15,9 @@ class Response: ObservableObject {
     @Published
     var error: Error?
     
-    @Published var timeTaken: Int;
+    @Published var timeTaken: Double;
     
-    init(data: Data? = nil, response: HTTPURLResponse? = nil, error: Error? = nil, timeTaken: Int = 0) {
+    init(data: Data? = nil, response: HTTPURLResponse? = nil, error: Error? = nil, timeTaken: TimeInterval = 0.0) {
         self.data = data
         self.response = response
         self.error = error

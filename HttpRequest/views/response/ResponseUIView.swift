@@ -14,7 +14,7 @@ struct ResponseUIView: View {
     var body: some View {
         TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
             
-            ContentsView(data: responseObject.getData()).tabItem { Text("Response") }.tag(1)
+            ContentsView(data: responseObject).tabItem { Text("Response") }.tag(1)
             
             CookiesView().tabItem { Text("Cookies") }.tag(2)
             
@@ -40,19 +40,23 @@ struct CookiesView: View {
 
 struct ContentsView: View {
     
-    var data: String
+    var data: Response
     
     var body: some View {
         VStack {
             HStack {
                 Spacer()
             Button(action: {
-                
+                copyToClipboardMac(text: data.getData())
             }) {
                 Text("Copy")
             }
             
             Button(action: {
+                
+                if let _data = data.data {
+                    download(data: _data)
+                }
                 
             }) {
                 Text("Download")
@@ -60,10 +64,37 @@ struct ContentsView: View {
         }
 
             ScrollView {
-                Text(data)
+                Text(data.getData())
             }
         }
     }
+    
+    func copyToClipboardMac(text: String) {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(text, forType: .string)
+        print("Text copied to clipboard: \(text)")
+    }
+    
+    func getDocumentsDirectory() -> URL? {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    }
+    
+    func download(data: Data) {
+        
+        guard let documentsDirectory = getDocumentsDirectory() else {
+                return
+            }
+        
+        let saveURL = documentsDirectory.appendingPathComponent("downloadedFile.json")
+        do {
+            try data.write(to: saveURL, options: .atomic)
+        } catch {
+            print("Error downloading file: \(error.localizedDescription)")
+        }
+
+    }
+    
 }
 
 

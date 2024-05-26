@@ -49,18 +49,16 @@ struct RequestUIView: View {
                 TextField("Enter URL", text: $request.url)
                 Button(action: {
                     loadingHttpRequest = true
-                    
-                    let startTime = Date()
-                    
-                    httpRequest.makeRequest(request: request) { (data: Data?, response: URLResponse?, error: Error?) in
-                        
-                        let endTime = Date()
-                        let elapsedTime = endTime.timeIntervalSince(startTime)
-                        
+                                        
+                    httpRequest.makeRequest(request: request) { (data: Data?, response: URLResponse?, error: Error?, timeInterval: TimeInterval) in
+                                                
                         responseObject.data = data;
                         responseObject.response = response as? HTTPURLResponse;
                         responseObject.error = error;
-                        responseObject.timeTaken = Int(elapsedTime)
+                        responseObject.timeTaken = timeInterval
+                        
+                        //print(data!)
+                        //print(JSONDecoder().decode(String., from: data!))
                         
                         loadingHttpRequest = false
                     }
@@ -84,6 +82,12 @@ struct RequestUIView: View {
             }
 
         }
+        .onAppear(perform: {
+            if request.method.isEmpty {
+                request.method = method
+                // request.url = "https://www.google.com/"
+            }
+        })
         
         
     }
@@ -98,12 +102,45 @@ struct StatsView: View {
     
     @ObservedObject var responseObject: Response;
     
+    var statusCodeColor: Color {
+        
+        let code = responseObject.statusCode()
+        
+        if code >= 100 && code <= 199 {
+            return .brown
+        }
+        
+        if code >= 200 && code <= 299 {
+            return .green
+        }
+        
+        if code >= 300 && code <= 399 {
+            return .blue
+        }
+        
+        if code >= 400 && code <= 499 {
+            return .red
+        }
+        
+        if code >= 500 && code <= 599 {
+            return .red
+        }
+        
+        return .primary
+    }
+    
     var body: some View {
         HStack {
             Spacer()
-            Text("Status: \(responseObject.statusCode())")
-            Text("Time: \(responseObject.timeTaken)")
-            Text("Size: \(responseObject.size())")
+            
+            HStack(spacing: 0) {
+                Text("Status: ")
+                Text("\(responseObject.statusCode())")
+                    .foregroundColor(statusCodeColor)
+            }
+            
+            Text("Time: \(responseObject.timeTaken) secs")
+            Text("Size: \(responseObject.size()) bytes")
         }
     }
 }
