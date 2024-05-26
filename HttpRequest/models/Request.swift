@@ -11,6 +11,7 @@ struct Parameter: Codable, Identifiable {
     var id = UUID()
     var key: String;
     var value: String;
+    var enabled: Bool;
 }
 
 struct Header: Codable {
@@ -28,14 +29,14 @@ struct Request: Identifiable, Codable {
     var method: String;
     //var urlProtocol: String;
     var url: String;
-    var parameters: Array<Parameter>;
+    var parameters: [Parameter];
     var body: String;
     var headers: Array<Header>
     //var authorization: Authorization;
     var tests: String;
     var variables: Array<Variable>;
     
-    init(method: String, urlProtocol: String, url: String, parameters: Array<Parameter>, body: String, headers: Array<Header>, authorization: Authorization, tests: String, variables: Array<Variable>) {
+    init(method: String, urlProtocol: String, url: String, parameters: [Parameter], body: String, headers: Array<Header>, authorization: Authorization, tests: String, variables: Array<Variable>) {
         self.method = method
         //self.urlProtocol = urlProtocol
         self.url = url
@@ -45,6 +46,17 @@ struct Request: Identifiable, Codable {
         //self.authorization = authorization
         self.tests = tests
         self.variables = variables
+    }
+    
+    init(parameters: [Parameter]) {
+        self.parameters = parameters
+        self.method = ""
+        //self.urlProtocol = ""
+        self.url = ""
+        self.body = ""
+        self.headers = []
+        self.tests = ""
+        self.variables = []
     }
     
     init() {

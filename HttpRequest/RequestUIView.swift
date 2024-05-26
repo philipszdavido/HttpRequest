@@ -70,7 +70,7 @@ struct RequestUIView: View {
                 AuthorizationUIView().tabItem { Text("Auth") }.tag(1)
                 BodyUIView().tabItem { Text("Body") }.tag(2)
                 HeadersUIView().tabItem { Text("Headers") }.tag(3)
-                ParametersUIView(parameters: $request.parameters).tabItem { Text("Parameters") }.tag(4)
+                ParametersUIView(request: $request).tabItem { Text("Parameters") }.tag(4)
             }
             if !loadingHttpRequest {
                 StatsView(responseObject: responseObject)
