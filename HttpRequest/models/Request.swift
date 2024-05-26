@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Parameter: Codable {
+struct Parameter: Codable, Identifiable {
+    var id = UUID()
     var key: String;
     var value: String;
 }

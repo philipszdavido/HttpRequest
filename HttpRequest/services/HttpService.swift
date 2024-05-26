@@ -38,7 +38,7 @@ class HttpService {
             }
         }
         
-        // print(request)
+        print(request)
         
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
 

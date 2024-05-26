@@ -11,6 +11,7 @@ import SwiftUI
 
 struct RequestUIView: View {
     @State var url: String = ""
+    @State private var selectedTab = 1
     
     let httpRequest = HttpService()
     @State private var request = Request()
@@ -48,18 +49,15 @@ struct RequestUIView: View {
                 
                 TextField("Enter URL", text: $request.url)
                 Button(action: {
-                    loadingHttpRequest = true
-                                        
+                    loadingHttpRequest = true;
+                                                            
                     httpRequest.makeRequest(request: request) { (data: Data?, response: URLResponse?, error: Error?, timeInterval: TimeInterval) in
                                                 
                         responseObject.data = data;
                         responseObject.response = response as? HTTPURLResponse;
                         responseObject.error = error;
                         responseObject.timeTaken = timeInterval
-                        
-                        //print(data!)
-                        //print(JSONDecoder().decode(String., from: data!))
-                        
+                                                
                         loadingHttpRequest = false
                     }
                 }, label: {
@@ -68,11 +66,11 @@ struct RequestUIView: View {
                 }).disabled(loadingHttpRequest || request.url.isEmpty)
             }
             Spacer()
-            TabView(selection: /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Selection@*/.constant(1)/*@END_MENU_TOKEN@*/) {
+            TabView(selection: $selectedTab) {
                 AuthorizationUIView().tabItem { Text("Auth") }.tag(1)
                 BodyUIView().tabItem { Text("Body") }.tag(2)
                 HeadersUIView().tabItem { Text("Headers") }.tag(3)
-                ParametersUIView().tabItem { Text("Parameters") }.tag(4)
+                ParametersUIView(parameters: $request.parameters).tabItem { Text("Parameters") }.tag(4)
             }
             if !loadingHttpRequest {
                 StatsView(responseObject: responseObject)
@@ -85,7 +83,7 @@ struct RequestUIView: View {
         .onAppear(perform: {
             if request.method.isEmpty {
                 request.method = method
-                // request.url = "https://www.google.com/"
+                request.url = "https://jsonplaceholder.typicode.com/posts/"
             }
         })
         
