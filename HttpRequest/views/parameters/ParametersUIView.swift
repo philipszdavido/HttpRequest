@@ -65,6 +65,9 @@ struct ParametersUIView: View {
                         .padding(4)
                         .border(Color.gray, width: 1)
                         .frame(height: 200)
+                        .onChange(of: text) { oldValue, newValue in
+                            print(newValue, oldValue)
+                        }
                 }.padding(5)
             }
 
