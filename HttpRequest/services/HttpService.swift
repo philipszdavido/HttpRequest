@@ -28,8 +28,8 @@ class HttpService {
         
         urlRequest.httpMethod = request.method
         
-        if !request.body.isEmpty {
-            urlRequest.httpBody = request.body.data(using: .utf8)
+        if !request.body.value.isEmpty {
+            //urlRequest.httpBody = request.body.data(using: .utf8)
         }
         
         if !request.headers.isEmpty {

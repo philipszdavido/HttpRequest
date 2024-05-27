@@ -70,13 +70,21 @@ struct XWwwFormUrlencodedView: View {
 
 struct RawView: View {
     var body: some View {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+        TextEditor(text: .constant(""))
+            .padding(4)
+            .border(Color.gray, width: 1)
+            .frame(height: 200)
+
     }
 }
 
 struct GraphQLView: View {
     var body: some View {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+        TextEditor(text: .constant(""))
+            .padding(4)
+            .border(Color.gray, width: 1)
+            .frame(height: 200)
+
     }
 }
 
