@@ -8,11 +8,42 @@
 import SwiftUI
 
 struct BodyUIView: View {
+    @Binding var request: Request
+    
+    @State var selectedBodyType = "none"
+    
+    private let bodyTypes = [
+        "none",
+        "orm-data",
+        "x-www-form-urlencoded",
+        "raw",
+        "graphql"
+    ]
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        MenuButton(label: Text(selectedBodyType)) {
+            
+            ForEach(bodyTypes, id:\.self) { bodyType in
+                Button {
+                    
+                } label: {
+                    Text(bodyType)
+                }
+            }
+            
+        }
+
+    }
+}
+
+struct BodyUIView_Preview: View {
+    @State var request = Request()
+
+    var body: some View {
+        BodyUIView(request: $request)
     }
 }
 
 #Preview {
-    BodyUIView()
+    BodyUIView_Preview()
 }

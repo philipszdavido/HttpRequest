@@ -16,10 +16,12 @@ struct ParametersUIView: View {
     var body: some View {
         VStack {
             HStack(alignment: .center) {
-                Text("Key")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Text("Value")
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                if !bulkEdit {
+                    Text("Key")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text("Value")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
                 Spacer()
                 Image(systemName: "plus.app.fill")
                     .onTapGesture {
@@ -36,15 +38,15 @@ struct ParametersUIView: View {
                         
                         bulkEdit.toggle()
                         
-                        let params = parseTextIntoParams(text: text)
+                        //let params = parseTextIntoParams(text: text)
                         
                         // print(params)
 
-                        if !params.isEmpty {
-                            params.forEach { parameter in
-                                request.parameters.append(parameter)
-                            }
-                        }
+//                        if !params.isEmpty {
+//                            params.forEach { parameter in
+//                                request.parameters.append(parameter)
+//                            }
+//                        }
                         
                     }.foregroundColor(bulkEdit ? .blue : .primary)
 
@@ -65,9 +67,29 @@ struct ParametersUIView: View {
                         .padding(4)
                         .border(Color.gray, width: 1)
                         .frame(height: 200)
-                        .onChange(of: text) { oldValue, newValue in
-                            print(newValue, oldValue)
-                        }
+                        .onAppear(perform: {
+                            // convert params in request into :
+                            let textParams = request.parameters.map { Parameter in
+                                var key = Parameter.key
+                                var value = Parameter.value
+                                var enabled = Parameter.enabled
+                                
+                                if  !enabled {
+                                    key = "#" + key
+                                }
+                                
+                                return key + " : " + value + "\n"
+                                
+                            }
+                            
+                            text = textParams.joined()
+                            
+                        })
+                        .onDisappear(perform: {
+                            // convert the text in editor into params
+                            
+                            request.parameters =  parseTextIntoParams(text: text)
+                        })
                 }.padding(5)
             }
 
@@ -133,11 +155,24 @@ struct ParamRow: View {
     }
 }
 
-#Preview {
-    @State var request = Request(parameters: [
+struct ParametersUIView_Preview: View {
+
+    @State var request = Request()    
+    
+    var body: some View {
+        return ParametersUIView(request: $request)
+    }
+    
+    init(request: Request = Request(parameters: [
         Parameter(key: "param1", value: "value1", enabled: true),
         Parameter(key: "param2", value: "value2", enabled: false)
-    ])
-    return ParametersUIView(request: $request)
+    ])) {
+        self.request = request
+    }
+    
+}
+
+#Preview {
+    ParametersUIView_Preview()
 }
 

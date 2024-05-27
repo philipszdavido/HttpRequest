@@ -22,10 +22,10 @@ struct AuthTypes: Identifiable {
 }
 
 struct AuthorizationUIView: View {
-    
+
     @State private var authType = AuthTypes(id: .none, name: "")
     
-    private var authTypes = [
+    var authTypes = [
         AuthTypes(id: .inherit, name: "Inherit"),
         AuthTypes(id: .none, name: "None"),
         AuthTypes(id: .basic, name: "Basic Auth"),
@@ -33,7 +33,9 @@ struct AuthorizationUIView: View {
         AuthTypes(id: .oauth_2_0, name: "OAuth 2.0"),
         AuthTypes(id: .api_key, name: "API Key")
     ]
-    
+
+    @Binding var request: Request
+
     var body: some View {
         VStack {
             VStack {
@@ -70,7 +72,7 @@ struct AuthorizationUIView: View {
                 }
                 
                 if authType.id == .basic {
-                    BasicAuthView()
+                    BasicAuthView(request: $request)
                 }
                 
                 if authType.id == .bearer {
@@ -92,18 +94,30 @@ struct AuthorizationUIView: View {
 }
 
 #Preview {
-    AuthorizationUIView()
+    
+    @State var request = Request(parameters: [
+        Parameter(key: "param1", value: "value1", enabled: true),
+        Parameter(key: "param2", value: "value2", enabled: false)
+    ])
+
+    return AuthorizationUIView(request: $request)
 }
+
 
 
 struct BasicAuthView: View {
 
-    @State private var username = ""
-    @State private var password = ""
+    @Binding var request: Request
+        
+    @State var parameter = Parameter(key: "", value: "", enabled: true)
 
     var body: some View {
-        TextField("Username", text: $username)
-        TextField("Password", text: $password)
+        VStack {
+            TextField("Username", text: $parameter.key)
+            TextField("Password", text: $parameter.value)
+        }.onAppear(perform: {
+            request.parameters.append(parameter)
+        })
     }
     
 }

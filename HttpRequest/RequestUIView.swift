@@ -67,9 +67,9 @@ struct RequestUIView: View {
             }
             Spacer()
             TabView(selection: $selectedTab) {
-                AuthorizationUIView().tabItem { Text("Auth") }.tag(1)
-                BodyUIView().tabItem { Text("Body") }.tag(2)
-                HeadersUIView().tabItem { Text("Headers") }.tag(3)
+                AuthorizationUIView(request: $request).tabItem { Text("Auth") }.tag(1)
+                BodyUIView(request: $request).tabItem { Text("Body") }.tag(2)
+                HeadersUIView(request: $request).tabItem { Text("Headers") }.tag(3)
                 ParametersUIView(request: $request).tabItem { Text("Parameters") }.tag(4)
             }
             if !loadingHttpRequest {
