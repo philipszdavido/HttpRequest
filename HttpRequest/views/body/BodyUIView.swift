@@ -14,7 +14,7 @@ struct BodyUIView: View {
     
     private let bodyTypes = [
         "none",
-        "orm-data",
+        "form-data",
         "x-www-form-urlencoded",
         "raw",
         "graphql"
@@ -25,14 +25,58 @@ struct BodyUIView: View {
             
             ForEach(bodyTypes, id:\.self) { bodyType in
                 Button {
-                    
+                    selectedBodyType = bodyType
                 } label: {
                     Text(bodyType)
                 }
             }
             
         }
+        
+        if selectedBodyType == "none" {
+            Text("This request does not have a body")
+        }
+        
+        if selectedBodyType == "form-data" {
+            FormDataView()
+        }
+        
+        if selectedBodyType == "x-www-form-urlencoded" {
+            XWwwFormUrlencodedView()
+        }
+        
+        if selectedBodyType == "raw" {
+            RawView()
+        }
+        
+        if selectedBodyType == "graphql" {
+            GraphQLView()
+        }
 
+    }
+}
+
+struct FormDataView: View {
+    var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+    }
+}
+
+struct XWwwFormUrlencodedView: View {
+    var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+    }
+}
+
+struct RawView: View {
+    var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+    }
+}
+
+struct GraphQLView: View {
+    var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
     }
 }
 
