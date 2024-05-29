@@ -10,20 +10,19 @@ import SwiftUI
 struct BodyType: Identifiable {
     let id = UUID()
     var type: BodyTypes;
-    //var value: String;
     
     func name() -> String {
         let type = self.type
         if type == .none {
-            return "None"
+            return "none"
         } else if type == .form_data {
-            return "Form Data"
+            return "form-data"
         } else if type == .raw {
-            return "Raw"
+            return "raw"
         } else if type == .x_www_form_urlencoded {
-            return "X WWW Form URLEncoded"
+            return "x-www-form-urlencoded"
         } else if type == .graphql {
-            return "GraphQL"
+            return "graphql"
         }
         return ""
     }
@@ -50,13 +49,20 @@ struct BodyUIView: View {
                 ForEach(bodyTypes) { bodyType in
                     Button {
                         selectedBodyType = bodyType
-                        request.body.type = selectedBodyType.type
+                        request.bodyContentTypes.selected = selectedBodyType.type
                     } label: {
                         Text(bodyType.name())
                     }
                 }
                 
             }
+            
+            Button {
+                print(request)
+            } label: {
+                Text("See Req")
+            }
+
             
             if selectedBodyType.type == .none {
                 Text("This request does not have a body")
@@ -71,11 +77,11 @@ struct BodyUIView: View {
             }
             
             if selectedBodyType.type == .raw {
-                RawView()
+                RawView(request: $request)
             }
             
             if selectedBodyType.type == .graphql {
-                GraphQLView()
+                GraphQLView(request: $request)
             }
             Spacer()
         }
@@ -87,20 +93,20 @@ struct FormDataView: View {
     
     @Binding var request: Request
     
-    @State var formData = [FormData(key: "", value: "", enabled: true)] {
-        didSet {
-            print(formData)
-        }
-    }
+//    @State var formData = [FormData(key: "", value: "", enabled: true)] {
+//        didSet {
+//            print(formData)
+//        }
+//    }
         
     var body: some View {
         
-        KeyValueView<FormData>(bindings: $formData, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
+        KeyValueView<FormData>(bindings: $request.bodyContentTypes.formData, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
 
     }
             
     func removeFormData(id: UUID) {
-        formData = formData.filter { binding in
+        request.bodyContentTypes.formData = request.bodyContentTypes.formData.filter { binding in
             binding.id == id
         }
     }
@@ -126,19 +132,19 @@ struct FormDataView: View {
     
     func add(key: String, value: String) {
         
-        formData += [FormData(key: key, value: value, enabled: true)]
+        request.bodyContentTypes.formData += [FormData(key: key, value: value, enabled: true)]
             
         // print(formData)
         
     }
     
     func addNew() {
-        formData += [FormData(key: "", value: "", enabled: true)]
+        request.bodyContentTypes.formData += [FormData(key: "", value: "", enabled: true)]
 
     }
     
     func deleteAll() {
-        formData = []
+        request.bodyContentTypes.formData = []
     }
 
   
@@ -149,16 +155,16 @@ struct XWwwFormUrlencodedView: View {
     
     @Binding var request: Request
     
-    @State var xWwwFormUrlencoded = [XWWWUrlEncoded(key: "", value: "", enabled: true)]
+//    @State var xWwwFormUrlencoded = [XWWWUrlEncoded(key: "", value: "", enabled: true)]
     
     var body: some View {
         
-        KeyValueView<XWWWUrlEncoded>(bindings: $xWwwFormUrlencoded, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
+        KeyValueView<XWWWUrlEncoded>(bindings: $request.bodyContentTypes.xwwwUrlEncoded, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
 
     }
     
     func removeFormData(id: UUID) {
-        xWwwFormUrlencoded = xWwwFormUrlencoded.filter { binding in
+        request.bodyContentTypes.xwwwUrlEncoded = request.bodyContentTypes.xwwwUrlEncoded.filter { binding in
             binding.id == id
         }
     }
@@ -184,26 +190,28 @@ struct XWwwFormUrlencodedView: View {
     
     func add(key: String, value: String) {
         
-        xWwwFormUrlencoded.append(XWWWUrlEncoded(key: key, value: value, enabled: true))
+        request.bodyContentTypes.xwwwUrlEncoded.append(XWWWUrlEncoded(key: key, value: value, enabled: true))
             
         // print(xWwwFormUrlencoded)
         
     }
     
     func addNew() {
-        xWwwFormUrlencoded.append(XWWWUrlEncoded(key: "", value: "", enabled: true))
+        request.bodyContentTypes.xwwwUrlEncoded.append(XWWWUrlEncoded(key: "", value: "", enabled: true))
     }
     
     func deleteAll() {
-        xWwwFormUrlencoded = []
+        request.bodyContentTypes.xwwwUrlEncoded = []
     }
   
 
 }
 
 struct RawView: View {
+    @Binding var request: Request
+
     var body: some View {
-        TextEditor(text: .constant(""))
+        TextEditor(text: $request.bodyContentTypes.raw)
             .padding(4)
             .border(Color.gray, width: 1)
             .frame(height: 200)
@@ -212,11 +220,13 @@ struct RawView: View {
 }
 
 struct GraphQLView: View {
+    @Binding var request: Request
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 0) {
                 Text("QUERY")
-                TextEditor(text: .constant(""))
+                TextEditor(text: $request.bodyContentTypes.graphql.query)
                     .padding(4)
                     .border(Color.gray, width: 1)
                 .frame(height: 200)
@@ -224,7 +234,7 @@ struct GraphQLView: View {
             
             VStack(alignment: .leading, spacing: 0) {
                 Text("GRAPHQL VARIABLES")
-                TextEditor(text: .constant(""))
+                TextEditor(text: $request.bodyContentTypes.graphql.variables)
                     .padding(4)
                     .border(Color.gray, width: 1)
                 .frame(height: 200)
