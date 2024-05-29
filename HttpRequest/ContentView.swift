@@ -34,13 +34,14 @@ struct ContentView: View {
     
         
     var body: some View {
-        HStack {
+        //HStack {
+        NavigationSplitView {
             
             Section {
                 TabView(selection: $selectedHistory) {
                     List(histories, selection: $selection) { history in
                         
-                            Text(history.request.url)
+                        Text(history.request.url)
                         
                     }.tabItem {
                         Text("History")
@@ -52,20 +53,22 @@ struct ContentView: View {
                 }.frame(width: 180)
             }.padding(.all, 4)
             
+            
+        } detail: {
             Section {
                 VStack {
                     HStack {
                         
                         ScrollView(.horizontal, showsIndicators: true) {
-                                HStack {
-                                    ForEach(tabs) { tab in
-                                        HStack {
+                            HStack {
+                                ForEach(tabs) { tab in
+                                    HStack {
                                         Text("\(tab.name)")
-                                            Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
+                                        Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
                                             tabs.remove(at: tab.id)
                                         })
-                                        }.padding(6)
-                                            .border(Color.black, width: 1).cornerRadius(3.0)
+                                    }.padding(6)
+                                        .border(Color.black, width: 1).cornerRadius(3.0)
                                 }
                                 
                             }
@@ -75,7 +78,7 @@ struct ContentView: View {
                             .onTapGesture(perform: {
                                 tabs.append(TabItem(name: "Untitled request"))
                             }).padding(.trailing, 4.0)
-
+                        
                         
                     }.padding(.all, 5)
                     Divider()
@@ -86,8 +89,10 @@ struct ContentView: View {
                 }
             };
         }
+        /*}
         .onAppear(perform: {
-        })
+        })*/
+            
     }
     
     private func deleteItems(offsets: IndexSet) {
