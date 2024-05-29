@@ -14,3 +14,11 @@ struct FormData: Codable, Identifiable, KeyValueEnabled {
     var value: String;
     var enabled: Bool;
 }
+
+struct XWWWUrlEncoded: Codable, Identifiable, KeyValueEnabled {
+    var id = UUID()
+    var key: String;
+    var value: String;
+    var enabled: Bool;
+}
+

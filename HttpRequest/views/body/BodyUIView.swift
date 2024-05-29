@@ -64,7 +64,7 @@ struct BodyUIView: View {
             }
             
             if selectedBodyType.type == .x_www_form_urlencoded {
-                XWwwFormUrlencodedView()
+                XWwwFormUrlencodedView(request: $request)
             }
             
             if selectedBodyType.type == .raw {
@@ -84,19 +84,96 @@ struct FormDataView: View {
     
     @Binding var request: Request
     
-    @State var formData = FormData(key: "", value: "", enabled: true)
+    @State var formData = [FormData(key: "", value: "", enabled: true)]
         
     var body: some View {
         
-        KeyValueView<C: KeyValueEnabled>(bindings: $formData)
+        KeyValueView<FormData>(bindings: $formData, remove: removeFormData, parseText: parseText)
 
     }
+        
+    func removeFormData(id: UUID) {
+        formData = formData.filter { binding in
+            binding.id == id
+        }
+    }
+    
+    func parseText(text: String) -> [FormData] {
+        let entries = text.split(separator: "\n")
+        let parameters = entries.map { entry in
+            let keysValues = entry.split(separator: ":")
+            // construct Parameter
+            
+            var key = String(keysValues[0])
+            let value = String(keysValues[1])
+            let enabled = entry.starts(with: "#") ? false : true
+            
+            if !enabled {
+                key = String(key.dropFirst())
+            }
+            
+            return FormData(key: key, value: value, enabled: enabled)
+        }
+        return parameters
+    }
+    
+    func add(key: String, value: String) {
+        
+        formData.append(FormData(key: key, value: value, enabled: true))
+            
+        print(formData)
+        
+    }
+  
+
 }
 
 struct XWwwFormUrlencodedView: View {
+    
+    @Binding var request: Request
+    
+    @State var xWwwFormUrlencoded = [XWWWUrlEncoded(key: "", value: "", enabled: true)]
+
     var body: some View {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+        
+        KeyValueView<XWWWUrlEncoded>(bindings: $xWwwFormUrlencoded, remove: removeFormData, parseText: parseText)
+
     }
+    
+    func removeFormData(id: UUID) {
+        xWwwFormUrlencoded = xWwwFormUrlencoded.filter { binding in
+            binding.id == id
+        }
+    }
+    
+    func parseText(text: String) -> [XWWWUrlEncoded] {
+        let entries = text.split(separator: "\n")
+        let parameters = entries.map { entry in
+            let keysValues = entry.split(separator: ":")
+            // construct Parameter
+            
+            var key = String(keysValues[0])
+            let value = String(keysValues[1])
+            let enabled = entry.starts(with: "#") ? false : true
+            
+            if !enabled {
+                key = String(key.dropFirst())
+            }
+            
+            return XWWWUrlEncoded(key: key, value: value, enabled: enabled)
+        }
+        return parameters
+    }
+    
+    func add(key: String, value: String) {
+        
+        xWwwFormUrlencoded.append(XWWWUrlEncoded(key: key, value: value, enabled: true))
+            
+        print(xWwwFormUrlencoded)
+        
+    }
+  
+
 }
 
 struct RawView: View {
@@ -137,6 +214,9 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
     @State private var text: String = ""
     
     @Binding var bindings: [C];
+    
+    var remove: (_ id: UUID) -> Void;
+    var parseText: (_ text: String) -> [C]
 
     var body: some View {
         VStack{
@@ -184,7 +264,7 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
                         }
                         Image(systemName: "trash")
                             .onTapGesture {
-                                //remove(binding.id)
+                                remove(binding.id)
                             }
 
                     }
@@ -218,7 +298,7 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
                         .onDisappear(perform: {
                             // convert the text in editor into params
                             
-                            bindings = parseText(text: text)
+                            bindings = parseText(text)
                         })
                 }.padding(5)
             }
@@ -228,37 +308,5 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
         }
 
     }
-    func add(key: String, value: String) {
-        
-        //bindings.append
-            
-        //print(request.parameters)
-        
-    }
-    
-    func remove(id: UUID) {
-        bindings = bindings.filter { binding in
-            binding.id == id
-        }
-    }
-    
-    func parseText(text: String) -> [C] {
-        let entries = text.split(separator: "\n")
-        let parameters = entries.map { entry in
-            let keysValues = entry.split(separator: ":")
-            // construct Parameter
-            
-            var key = String(keysValues[0])
-            let value = String(keysValues[1])
-            let enabled = entry.starts(with: "#") ? false : true
-            
-            if !enabled {
-                key = String(key.dropFirst())
-            }
-            
-            return C(key: key, value: value, enabled: enabled)
-        }
-        return parameters
-    }
-
+  
 }
