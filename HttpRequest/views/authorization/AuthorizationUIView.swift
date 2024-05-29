@@ -7,31 +7,22 @@
 
 import SwiftUI
 
-enum AuthTypesEnums {
-    case none
-    case inherit
-    case basic
-    case bearer
-    case oauth_2_0
-    case api_key
-}
-
 struct AuthTypes: Identifiable {
-    var id: AuthTypesEnums;
+    var id: AuthType;
     var name: String;
 }
 
 struct AuthorizationUIView: View {
 
-    @State private var authType = AuthTypes(id: .none, name: "")
+    @State private var authType = AuthTypes(id: .none, name: "None")
     
     var authTypes = [
         AuthTypes(id: .inherit, name: "Inherit"),
         AuthTypes(id: .none, name: "None"),
         AuthTypes(id: .basic, name: "Basic Auth"),
         AuthTypes(id: .bearer, name: "Bearer"),
-        AuthTypes(id: .oauth_2_0, name: "OAuth 2.0"),
-        AuthTypes(id: .api_key, name: "API Key")
+        AuthTypes(id: .oauth2, name: "OAuth 2.0"),
+        AuthTypes(id: .apikey, name: "API Key")
     ]
 
     @Binding var request: Request
@@ -46,6 +37,7 @@ struct AuthorizationUIView: View {
                         ForEach(authTypes) { _authType in
                             Button {
                                 authType = _authType
+                                request.authorization.selected = _authType.id
                             } label: {
                                 Text(_authType.name)
                             }
@@ -76,15 +68,15 @@ struct AuthorizationUIView: View {
                 }
                 
                 if authType.id == .bearer {
-                    BearerAuthView()
+                    BearerAuthView(request: $request)
                 }
                 
-                if authType.id == .api_key {
-                    API_Key_View()
+                if authType.id == .apikey {
+                    API_Key_View(request: $request)
                 }
                 
-                if authType.id == .oauth_2_0 {
-                    OAuth_2_0_View()
+                if authType.id == .oauth2 {
+                    OAuth_2_0_View(request: $request)
                 }
                 
             }
@@ -93,30 +85,15 @@ struct AuthorizationUIView: View {
     }
 }
 
-#Preview {
-    
-    @State var request = Request(parameters: [
-        Parameter(key: "param1", value: "value1", enabled: true),
-        Parameter(key: "param2", value: "value2", enabled: false)
-    ])
-
-    return AuthorizationUIView(request: $request)
-}
-
-
-
 struct BasicAuthView: View {
 
     @Binding var request: Request
         
-    @State var parameter = Parameter(key: "", value: "", enabled: true)
-
     var body: some View {
         VStack {
-            TextField("Username", text: $parameter.key)
-            TextField("Password", text: $parameter.value)
+            TextField("Username", text: $request.authorization.basic.username)
+            TextField("Password", text: $request.authorization.basic.password)
         }.onAppear(perform: {
-            request.parameters.append(parameter)
         })
     }
     
@@ -124,17 +101,17 @@ struct BasicAuthView: View {
 
 
 struct BearerAuthView: View {
-    
-    @State private var token = ""
+    @Binding var request: Request
     
     var body: some View {
-        TextField("Token", text: $token)
+        TextField("Token", text: $request.authorization.bearer.token)
     }
 }
 
 
 struct OAuth_2_0_View: View {
-    
+    @Binding var request: Request
+
     @State private var token = ""
     
     var body: some View {
@@ -142,31 +119,35 @@ struct OAuth_2_0_View: View {
     }
 }
 
+struct APIKeyAddTo: Identifiable {
+    let id = UUID()
+    var name: String;
+    var type: ApiKeyEnum;
+}
 
 struct API_Key_View: View {
+    @Binding var request: Request
     
-    @State private var key = ""
-    @State private var value = ""
-    @State private var passBy = ""
-    @State private var passByValue = ""
+    @State private var addTo = APIKeyAddTo(name: "Headers", type: .header)
 
     var body: some View {
-        TextField("Key", text: $key)
-        TextField("Value", text: $value)
+        TextField("Key", text: $request.authorization.apikey.key)
+        TextField("Value", text: $request.authorization.apikey.value)
         
         HStack {
             Text("Pass by:")
-            MenuButton(label: Text(passBy)) {
+            MenuButton(label: Text(addTo.name)) {
                 
-                ForEach(["Headers", "Query Parameters"], id: \.self) { type in
+                ForEach([APIKeyAddTo(name: "Headers", type: .header), APIKeyAddTo(name: "Query Parameters", type: .query_param)]) { type in
                     Button {
                         
-                        passBy = type
-                        passByValue = type.lowercased().split(separator: " ").joined()
+                        request.authorization.apikey.addTo = type.type
                         
-                        print(passByValue)
+                        addTo = type
+                        
+                        // print(addTo, request.authorization)
                     } label: {
-                        Text(type)
+                        Text(type.name)
                     }
                 }
                 
@@ -175,4 +156,20 @@ struct API_Key_View: View {
 
 
     }
+}
+
+
+struct AuthorizationUIView_Preview: View {
+
+    @State var request = Request()
+
+    var body: some View {
+
+        AuthorizationUIView(request: $request)
+
+    }
+}
+
+#Preview {
+    AuthorizationUIView_Preview()
 }

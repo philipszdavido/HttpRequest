@@ -7,34 +7,6 @@
 
 import Foundation
 
-
-//struct Authorization: Codable {
-//    var type: String;
-//    var auth: Basic Bearer
-//}
-//
-//struct Basic: Codable {
-//    var type: String {
-//        return "Basic"
-//    }
-//    var username: String
-//    var password: String
-//}
-//
-//struct Bearer: Codable {
-//    var type: String {
-//        return "Bearer"
-//    }
-//    var token: String
-//}
-//
-//struct ApiKey: Codable {
-//    var type: String {
-//        return "ApiKey"
-//    }
-//    var apiKey: String
-//}
-
 enum AuthType: Codable {
     case none
     case inherit
@@ -45,8 +17,13 @@ enum AuthType: Codable {
 }
 
 struct Authorization: Codable {
-    var type: AuthType;
-    var value: String
+    var selected: AuthType = .none;
+    var none = 0
+    var inherit = false;
+    var basic = Basic(username: "", password: "")
+    var bearer = Bearer(token: "")
+    var oauth2 = ""
+    var apikey = ApiKey(key: "", value: "", addTo: .query_param)
 }
 
 struct Basic: Codable {
@@ -58,6 +35,13 @@ struct Bearer: Codable {
     var token: String
 }
 
+enum ApiKeyEnum: Codable {
+    case header
+    case query_param
+}
+
 struct ApiKey: Codable {
-    var apiKey: String
+    var key: String
+    var value: String;
+    var addTo: ApiKeyEnum
 }
