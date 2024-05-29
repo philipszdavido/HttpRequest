@@ -57,11 +57,11 @@ struct BodyUIView: View {
                 
             }
             
-            Button {
-                print(request)
-            } label: {
-                Text("See Req")
-            }
+//            Button {
+//                print(request.bodyContentTypes)
+//            } label: {
+//                Text("See Req")
+//            }
 
             
             if selectedBodyType.type == .none {
