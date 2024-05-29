@@ -10,6 +10,7 @@ import SwiftUI
 struct BodyType: Identifiable {
     let id = UUID()
     var type: BodyTypes;
+    //var value: String;
     
     func name() -> String {
         let type = self.type
@@ -29,6 +30,7 @@ struct BodyType: Identifiable {
 }
 
 struct BodyUIView: View {
+    
     @Binding var request: Request
     
     @State var selectedBodyType = BodyType(type: .none)
@@ -48,6 +50,7 @@ struct BodyUIView: View {
                 ForEach(bodyTypes) { bodyType in
                     Button {
                         selectedBodyType = bodyType
+                        request.body.type = selectedBodyType.type
                     } label: {
                         Text(bodyType.name())
                     }
@@ -84,14 +87,18 @@ struct FormDataView: View {
     
     @Binding var request: Request
     
-    @State var formData = [FormData(key: "", value: "", enabled: true)]
+    @State var formData = [FormData(key: "", value: "", enabled: true)] {
+        didSet {
+            print(formData)
+        }
+    }
         
     var body: some View {
         
-        KeyValueView<FormData>(bindings: $formData, remove: removeFormData, parseText: parseText)
+        KeyValueView<FormData>(bindings: $formData, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
 
     }
-        
+            
     func removeFormData(id: UUID) {
         formData = formData.filter { binding in
             binding.id == id
@@ -119,11 +126,21 @@ struct FormDataView: View {
     
     func add(key: String, value: String) {
         
-        formData.append(FormData(key: key, value: value, enabled: true))
+        formData += [FormData(key: key, value: value, enabled: true)]
             
-        print(formData)
+        // print(formData)
         
     }
+    
+    func addNew() {
+        formData += [FormData(key: "", value: "", enabled: true)]
+
+    }
+    
+    func deleteAll() {
+        formData = []
+    }
+
   
 
 }
@@ -133,10 +150,10 @@ struct XWwwFormUrlencodedView: View {
     @Binding var request: Request
     
     @State var xWwwFormUrlencoded = [XWWWUrlEncoded(key: "", value: "", enabled: true)]
-
+    
     var body: some View {
         
-        KeyValueView<XWWWUrlEncoded>(bindings: $xWwwFormUrlencoded, remove: removeFormData, parseText: parseText)
+        KeyValueView<XWWWUrlEncoded>(bindings: $xWwwFormUrlencoded, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
 
     }
     
@@ -169,8 +186,16 @@ struct XWwwFormUrlencodedView: View {
         
         xWwwFormUrlencoded.append(XWWWUrlEncoded(key: key, value: value, enabled: true))
             
-        print(xWwwFormUrlencoded)
+        // print(xWwwFormUrlencoded)
         
+    }
+    
+    func addNew() {
+        xWwwFormUrlencoded.append(XWWWUrlEncoded(key: "", value: "", enabled: true))
+    }
+    
+    func deleteAll() {
+        xWwwFormUrlencoded = []
     }
   
 
@@ -188,11 +213,23 @@ struct RawView: View {
 
 struct GraphQLView: View {
     var body: some View {
-        TextEditor(text: .constant(""))
-            .padding(4)
-            .border(Color.gray, width: 1)
-            .frame(height: 200)
-
+        HStack {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("QUERY")
+                TextEditor(text: .constant(""))
+                    .padding(4)
+                    .border(Color.gray, width: 1)
+                .frame(height: 200)
+            }
+            
+            VStack(alignment: .leading, spacing: 0) {
+                Text("GRAPHQL VARIABLES")
+                TextEditor(text: .constant(""))
+                    .padding(4)
+                    .border(Color.gray, width: 1)
+                .frame(height: 200)
+            }
+        }
     }
 }
 
@@ -217,6 +254,8 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
     
     var remove: (_ id: UUID) -> Void;
     var parseText: (_ text: String) -> [C]
+    var addNew: () -> Void
+    var deleteAll: () -> Void
 
     var body: some View {
         VStack{
@@ -230,10 +269,11 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
                 Spacer()
                 Image(systemName: "plus.app.fill")
                     .onTapGesture {
-                        
+                        addNew()
                     }
                 Image(systemName: "trash")
                     .onTapGesture {
+                        deleteAll()
                     }
                 Image(systemName: "square.and.pencil")
                     .onTapGesture {
@@ -255,8 +295,8 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
                         ))
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         TextField("Value", text: Binding(
-                            get: { binding[keyPath: \.key] },
-                            set: { binding[keyPath: \.key] = $0 }
+                            get: { binding[keyPath: \.value] },
+                            set: { binding[keyPath: \.value] = $0 }
                         ))
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                         Toggle(isOn: $binding.enabled) {
@@ -281,8 +321,8 @@ struct KeyValueView<C: KeyValueEnabled & Codable & Identifiable>: View {
                             // convert params in request into :
                             let textParams = bindings.map { binding in
                                 var key = binding.key
-                                var value = binding.value
-                                var enabled = binding.enabled
+                                let value = binding.value
+                                let enabled = binding.enabled
                                 
                                 if  !enabled {
                                     key = "#" + key
