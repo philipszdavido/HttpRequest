@@ -35,17 +35,18 @@ import Foundation
 //    var apiKey: String
 //}
 
-//enum AuthType: String, Codable {
-//    case none
-//    case inherit
-//    case basic
-//    case bearer
-//    case oauth2
-//    case apikey
-//}
+enum AuthType: Codable {
+    case none
+    case inherit
+    case basic
+    case bearer
+    case oauth2
+    case apikey
+}
 
 struct Authorization: Codable {
-    var type: String;
+    var type: AuthType;
+    var value: String
 }
 
 struct Basic: Codable {

@@ -42,7 +42,7 @@ struct ContentView: View {
                         
                         //ForEach(histories) { history in
                             
-                            Text(history.request.url)//.padding(.vertical, 5.0)
+                            //Text(history.request.url)//.padding(.vertical, 5.0)
                             
                         //}.onDelete(perform: deleteItems)
                         

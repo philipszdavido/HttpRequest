@@ -28,6 +28,7 @@
 		4FDBABD92C01152800D185C5 /* HttpService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABD82C01152800D185C5 /* HttpService.swift */; };
 		4FDBABDC2C01CD4F00D185C5 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABDB2C01CD4F00D185C5 /* History.swift */; };
 		4FDBABDE2C01CDAD00D185C5 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABDD2C01CDAD00D185C5 /* Request.swift */; };
+		4FF23B812C071EDF00EB2CC7 /* Body.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF23B802C071EDF00EB2CC7 /* Body.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,7 @@
 		4FDBABD82C01152800D185C5 /* HttpService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpService.swift; sourceTree = "<group>"; };
 		4FDBABDB2C01CD4F00D185C5 /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		4FDBABDD2C01CDAD00D185C5 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		4FF23B802C071EDF00EB2CC7 /* Body.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Body.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -239,6 +241,7 @@
 				4FDBABDD2C01CDAD00D185C5 /* Request.swift */,
 				4F4F4F352C02129700E0972D /* Authorization.swift */,
 				4F4F4F372C022EDB00E0972D /* Response.swift */,
+				4FF23B802C071EDF00EB2CC7 /* Body.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -387,6 +390,7 @@
 				4FDBABA72C0112BB00D185C5 /* HttpRequestApp.swift in Sources */,
 				4F4F4F3C2C02387100E0972D /* ResponseUIView.swift in Sources */,
 				4FDBABD92C01152800D185C5 /* HttpService.swift in Sources */,
+				4FF23B812C071EDF00EB2CC7 /* Body.swift in Sources */,
 				4F4F4F422C0252AB00E0972D /* AuthorizationUIView.swift in Sources */,
 				4F4F4F3F2C0246BF00E0972D /* Utils.swift in Sources */,
 			);
