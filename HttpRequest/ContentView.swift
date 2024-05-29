@@ -40,11 +40,7 @@ struct ContentView: View {
                 TabView(selection: $selectedHistory) {
                     List(histories, selection: $selection) { history in
                         
-                        //ForEach(histories) { history in
-                            
-                            //Text(history.request.url)//.padding(.vertical, 5.0)
-                            
-                        //}.onDelete(perform: deleteItems)
+                            Text(history.request.url)
                         
                     }.tabItem {
                         Text("History")
@@ -78,7 +74,6 @@ struct ContentView: View {
                         Image(systemName: "plus.circle.fill")
                             .onTapGesture(perform: {
                                 tabs.append(TabItem(name: "Untitled request"))
-                                print(selectedItem)
                             }).padding(.trailing, 4.0)
 
                         
@@ -92,18 +87,6 @@ struct ContentView: View {
             };
         }
         .onAppear(perform: {
-//            let newRequest = Request(
-//                        method: "GET",
-//                        url: "http://example.com",
-//                        parameters: [],
-//                        body: "",
-//                        headers: [],
-//                        authorization: Authorization(type: <#AuthType#>),
-//                        tests: "",
-//                        variables: []
-//                    )
-//            
-//            modelContext.insert(History(request: newRequest))
         })
     }
     
