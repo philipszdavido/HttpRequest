@@ -29,6 +29,7 @@
 		4FDBABDC2C01CD4F00D185C5 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABDB2C01CD4F00D185C5 /* History.swift */; };
 		4FDBABDE2C01CDAD00D185C5 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABDD2C01CDAD00D185C5 /* Request.swift */; };
 		4FF23B812C071EDF00EB2CC7 /* Body.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF23B802C071EDF00EB2CC7 /* Body.swift */; };
+		4FF23B832C07A66100EB2CC7 /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF23B822C07A66100EB2CC7 /* Collection.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		4FDBABDB2C01CD4F00D185C5 /* History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		4FDBABDD2C01CDAD00D185C5 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		4FF23B802C071EDF00EB2CC7 /* Body.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Body.swift; sourceTree = "<group>"; };
+		4FF23B822C07A66100EB2CC7 /* Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +244,7 @@
 				4F4F4F352C02129700E0972D /* Authorization.swift */,
 				4F4F4F372C022EDB00E0972D /* Response.swift */,
 				4FF23B802C071EDF00EB2CC7 /* Body.swift */,
+				4FF23B822C07A66100EB2CC7 /* Collection.swift */,
 			);
 			path = models;
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				4F4F4F382C022EDB00E0972D /* Response.swift in Sources */,
 				4FDBABAB2C0112BB00D185C5 /* Item.swift in Sources */,
 				4FDBABD62C01132B00D185C5 /* MainView.swift in Sources */,
+				4FF23B832C07A66100EB2CC7 /* Collection.swift in Sources */,
 				4F4F4F362C02129700E0972D /* Authorization.swift in Sources */,
 				4F4F4F472C02530500E0972D /* ParametersUIView.swift in Sources */,
 				4FDBABA72C0112BB00D185C5 /* HttpRequestApp.swift in Sources */,

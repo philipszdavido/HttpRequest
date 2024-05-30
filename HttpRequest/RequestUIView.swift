@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 // https://www.google.com
 
+let PADDING_TOP: CGFloat = 10.0
+
 struct RequestUIView: View {
     @State var url: String = ""
     @State private var selectedTab = 1
@@ -23,10 +25,12 @@ struct RequestUIView: View {
     
     var body: some View {
         VStack {
+            
             HStack {
                 Text("Untitled POST request")
                 Spacer()
-            }
+            }.padding(PADDING_TOP)
+            
             HStack {
                 
                 MenuButton(label: Text(method)) {
@@ -46,8 +50,8 @@ struct RequestUIView: View {
                 }
                 .frame(width: 100)
 
-                
                 TextField("Enter URL", text: $request.url)
+                
                 Button(action: {
                     loadingHttpRequest = true;
                                                             
@@ -64,17 +68,21 @@ struct RequestUIView: View {
                     if loadingHttpRequest  { Text("Sending...") } else { Text("Send")
                     }
                 }).disabled(loadingHttpRequest || request.url.isEmpty)
-            }
+            }.padding(PADDING_TOP)
+            
             Spacer()
             TabView(selection: $selectedTab) {
-                AuthorizationUIView(request: $request).tabItem { Text("Auth") }.tag(1)
-                BodyUIView(request: $request).tabItem { Text("Body") }.tag(2)
-                HeadersUIView(request: $request).tabItem { Text("Headers") }.tag(3)
-                ParametersUIView(request: $request).tabItem { Text("Parameters") }.tag(4)
-            }
+                AuthorizationUIView(request: $request).padding([.top, .trailing, .leading], PADDING_TOP).tabItem { Text("Auth") }.tag(1)
+                BodyUIView(request: $request).padding([.top, .trailing, .leading], PADDING_TOP).tabItem { Text("Body") }.tag(2)
+                HeadersUIView(request: $request).padding([.top, .trailing, .leading], PADDING_TOP).tabItem { Text("Headers") }.tag(3)
+                ParametersUIView(request: $request).padding([.top, .trailing, .leading], PADDING_TOP).tabItem { Text("Parameters") }.tag(4)
+            }.padding([.top], PADDING_TOP)
+            
             if !loadingHttpRequest {
                 StatsView(responseObject: responseObject)
+                    .padding([.top], PADDING_TOP)
                 ResponseUIView(responseObject: responseObject)
+                    .padding([.top], PADDING_TOP)
             } else {
                 ProgressView().padding(.all, 10).frame(height: 200)
             }
@@ -83,7 +91,8 @@ struct RequestUIView: View {
         .onAppear(perform: {
             if request.method.isEmpty {
                 request.method = method
-                request.url = "https://jsonplaceholder.typicode.com/posts/"
+//                request.url = "https://jsonplaceholder.typicode.com/posts/"
+                request.url = "https://www.google.com/"
             }
         })
         

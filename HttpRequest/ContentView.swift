@@ -62,36 +62,37 @@ struct ContentView: View {
                         ScrollView(.horizontal, showsIndicators: true) {
                             HStack {
                                 ForEach(tabs) { tab in
-                                    HStack {
-                                        Text("\(tab.name)")
-                                        Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
-                                            tabs.remove(at: tab.id)
-                                        })
-                                    }.padding(6)
-                                        .border(Color.black, width: 1).cornerRadius(3.0)
+                                    TabButton(tab: tab, tabs: $tabs)
                                 }
                                 
                             }
                         }.padding([.trailing, .top, .leading], 4.0)
                         
-                        Image(systemName: "plus.circle.fill")
-                            .onTapGesture(perform: {
-                                tabs.append(TabItem(name: "Untitled request"))
-                            }).padding(.trailing, 4.0)
+//                        Image(systemName: "plus.circle.fill")
+//                            .onTapGesture(perform: {
+//                                tabs.append(TabItem(name: "Untitled request"))
+//                            }).padding(.trailing, 4.0)
                         
                         
-                    }.padding(.all, 5)
+                    }//.padding(.all, 5)
                     Divider()
                     ScrollView {
                         RequestUIView()
-                    }.padding(.all, 5)
+                    }.padding([.trailing, .leading], 10)
                     Spacer()
                 }
             };
+        }.toolbar {
+            ToolbarItem {
+                Button(action: {
+                    tabs.append(TabItem(name: "Untitled request"))
+                }) {
+                    Label("Add Item", systemImage: "plus")
+                }
+            }
+
         }
-        /*}
-        .onAppear(perform: {
-        })*/
+        
             
     }
     
@@ -110,4 +111,20 @@ struct ContentView: View {
     ContentView()
         .modelContainer(for: History.self, inMemory: true)
         
+}
+
+struct TabButton: View {
+    
+    var tab: TabItem
+    @Binding var tabs: [TabItem]
+    
+    var body: some View {
+        HStack {
+            Text("\(tab.name)")
+            Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
+                tabs.remove(at: tab.id)
+            })
+        }.padding(6)
+            .border(Color.black, width: 1).cornerRadius(3.0)
+    }
 }

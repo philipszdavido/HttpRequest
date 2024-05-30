@@ -15,10 +15,10 @@ enum BodyTypes: Codable {
     case graphql
 }
 
-struct Body: Codable {
-    var type: BodyTypes
-    var value: String
-}
+//struct Body: Codable {
+//    var type: BodyTypes
+//    var value: String
+//}
 
 struct FormData: Codable, Identifiable, KeyValueEnabled {
     var id = UUID()
@@ -40,7 +40,7 @@ struct GraphQL: Codable, Identifiable {
     var variables: String
 }
 
-struct AllBody: Codable {
+struct Body: Codable {
     var none = 0
     var formData: [FormData] = []
     var xwwwUrlEncoded: [XWWWUrlEncoded] = []
