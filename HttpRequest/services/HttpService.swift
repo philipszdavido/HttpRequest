@@ -21,7 +21,7 @@ class HttpService {
         
         // Add the parameters as query items
         if !request.parameters.isEmpty {
-            urlComponents.queryItems = request.parameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+            self.processParams(urlComponents: &urlComponents, parameters: request.parameters)
         }
         
         var urlRequest = URLRequest(url: urlComponents.url!)
@@ -29,17 +29,18 @@ class HttpService {
         urlRequest.httpMethod = request.method
         
         if request.body.selected != .none {
-            //urlRequest.httpBody = request.body.data(using: .utf8)
-            urlRequest = self.processBody(body: request.body, urlRequest: &urlRequest)
+            self.processBody(body: request.body, urlRequest: &urlRequest)
         }
         
+        if request.authorization.selected != .none {
+            self.processAuth(auth: request.authorization, urlRequest: &urlRequest)
+        }
+                
         if !request.headers.isEmpty {
-            request.headers.forEach { header in
-                urlRequest.addValue(header.key, forHTTPHeaderField: header.value)
-            }
+            self.processHeaders(headers: request.headers, urlRequest: &urlRequest)
         }
         
-        print(request)
+        print(urlRequest)
         
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
 
@@ -63,10 +64,12 @@ class HttpService {
             
             let bodyHttpService = BodyFormDataHttpService(value: body.formData)
             let postData = bodyHttpService.process()
+            
+            let boundary = bodyHttpService.getBoundary()
                         
             urlRequest.addValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
 
-            urlRequest.httpMethod = "POST"
+            // urlRequest.httpMethod = "POST"
             urlRequest.httpBody = postData
             
             return;
@@ -84,16 +87,115 @@ class HttpService {
             return;
             
         case .raw:
-            <#code#>
+            let raw = RawHttpService(value: body.raw)
+            let postData = raw.process()
+            
+            urlRequest.timeoutInterval = Double.infinity
+            urlRequest.addValue("application/javascript", forHTTPHeaderField: "Content-Type")
+
+            // urlRequest.httpMethod = "POST"
+            urlRequest.httpBody = postData
+            
+            return;
+
         case .graphql:
-            <#code#>
+            let graphql = GraphQLHttpService(query: body.graphql.query, variables: body.graphql.variables)
+            let postData = graphql.process()
+
+            urlRequest.timeoutInterval = Double.infinity
+            urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            urlRequest.httpMethod = "POST"
+            urlRequest.httpBody = postData
+
+            return;
         }
 
     }
     
-    func processAuth() {}
-    func processParams() {}
-    func processHeaders() {}
+    func processAuth(auth: Authorization, urlRequest: inout URLRequest) {
+        switch auth.selected {
+        case .none:
+            return;
+        case .inherit:
+            // TODO: Implement inherit
+            return;
+        case .basic:
+            
+            let usernamePassword = auth.basic.username + ":" + auth.basic.password
+            
+            // Convert the string to Data
+            if let data = usernamePassword.data(using: .utf8) {
+                // Encode the data to Base64
+                let base64EncodedString =  "Basic " + data.base64EncodedString()
+                
+                urlRequest.timeoutInterval = Double.infinity
+                urlRequest.addValue(base64EncodedString, forHTTPHeaderField: "Authorization")
+                
+                print("Base64 Encoded String: \(base64EncodedString)")
+            } else {
+                print("Failed to convert string to Data")
+            }
+            return;
+            
+        case .bearer:
+            
+            urlRequest.timeoutInterval = Double.infinity
+            urlRequest.addValue("Bearer " + auth.bearer.token, forHTTPHeaderField: "Authorization")
+            return;
+        case .oauth2:
+            // TODO: Implement
+            return;
+            
+        case .apikey:
+            
+            if auth.apikey.addTo == .header {
+                
+                urlRequest.timeoutInterval = Double.infinity
+                urlRequest.addValue(auth.apikey.value, forHTTPHeaderField: auth.apikey.key)
+                
+            } else if auth.apikey.addTo == .query_param {
+                
+                urlRequest.timeoutInterval = Double.infinity
+                
+                // Create the URL components object to append the parameters
+                if var urlComponents = URLComponents(url: urlRequest.url!, resolvingAgainstBaseURL: true) {
+                    
+                    // Existing query items (if any)
+                    var queryItems = urlComponents.queryItems ?? []
+                    
+                    // Append new query item
+                    queryItems.append(URLQueryItem(name: auth.apikey.key, value: auth.apikey.value))
+                    
+                    // Update the URL components with the combined query items
+                    urlComponents.queryItems = queryItems
+                    
+                    // Set the updated URL back to the URLRequest
+                    urlRequest.url = urlComponents.url
+                }
+                
+            }
+            
+            return;
+            
+        }
+    }
+    
+    func processParams(urlComponents: inout URLComponents, parameters: [Parameter]) {
+        
+        urlComponents.queryItems = parameters.filter{ parameter in
+            parameter.enabled
+        }.map { URLQueryItem(name: $0.key, value: $0.value) }
+
+    }
+    
+    func processHeaders(headers: [Header], urlRequest: inout URLRequest) {
+        
+        headers.forEach { header in
+            urlRequest.addValue(header.key, forHTTPHeaderField: header.value)
+        }
+
+    }
 }
 
 protocol ProcessHttpService {
@@ -104,9 +206,14 @@ protocol ProcessHttpService {
 class BodyFormDataHttpService: ProcessHttpService {
     
     var value: [FormData]
+    private var boundary = UUID().uuidString
     
     init(value: [FormData]) {
         self.value = value
+    }
+    
+    func getBoundary() -> String {
+        return self.boundary
     }
     
     func process() -> Data {
@@ -137,7 +244,7 @@ class BodyFormDataHttpService: ProcessHttpService {
             
         } as [[String: Any]]
 
-        let boundary = "Boundary-\(UUID().uuidString)"
+        let boundary = "Boundary-\(self.boundary)"
         var body = Data()
         
         var _: Error? = nil
@@ -198,4 +305,43 @@ class BodyXWWUrlEncoded: ProcessHttpService {
 
     }
 
+}
+
+class RawHttpService: ProcessHttpService {
+    
+    var value: String;
+    
+    init(value: String) {
+        self.value = value
+    }
+    
+    func process() -> Data {
+        let parameters = self.value //"jhbjhbjh"
+        let postData = parameters.data(using: .utf8)
+        return postData!
+
+    }
+}
+
+class GraphQLHttpService: ProcessHttpService {
+    
+    var query: String;
+    var variables: String;
+    
+    init(query: String, variables: String) {
+        self.query = query
+        self.variables = variables
+    }
+    
+    func process() -> Data {
+        
+        var query = "query: {" + self.query + "},";
+        var variables = "variables: {" + self.variables + "}"
+        
+        var parameter = "{" + query + variables + "}";
+        let postData = parameter.data(using: .utf8)
+        
+        return postData!
+
+    }
 }
