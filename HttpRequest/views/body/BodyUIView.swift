@@ -49,7 +49,7 @@ struct BodyUIView: View {
                 ForEach(bodyTypes) { bodyType in
                     Button {
                         selectedBodyType = bodyType
-                        request.bodyContentTypes.selected = selectedBodyType.type
+                        request.body.selected = selectedBodyType.type
                     } label: {
                         Text(bodyType.name())
                     }
@@ -101,12 +101,12 @@ struct FormDataView: View {
         
     var body: some View {
         
-        KeyValueView<FormData>(bindings: $request.bodyContentTypes.formData, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
+        KeyValueView<FormData>(bindings: $request.body.formData, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
 
     }
             
     func removeFormData(id: UUID) {
-        request.bodyContentTypes.formData = request.bodyContentTypes.formData.filter { binding in
+        request.body.formData = request.body.formData.filter { binding in
             binding.id == id
         }
     }
@@ -132,19 +132,19 @@ struct FormDataView: View {
     
     func add(key: String, value: String) {
         
-        request.bodyContentTypes.formData += [FormData(key: key, value: value, enabled: true)]
+        request.body.formData += [FormData(key: key, value: value, enabled: true)]
             
         // print(formData)
         
     }
     
     func addNew() {
-        request.bodyContentTypes.formData += [FormData(key: "", value: "", enabled: true)]
+        request.body.formData += [FormData(key: "", value: "", enabled: true)]
 
     }
     
     func deleteAll() {
-        request.bodyContentTypes.formData = []
+        request.body.formData = []
     }
 
   
@@ -159,12 +159,12 @@ struct XWwwFormUrlencodedView: View {
     
     var body: some View {
         
-        KeyValueView<XWWWUrlEncoded>(bindings: $request.bodyContentTypes.xwwwUrlEncoded, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
+        KeyValueView<XWWWUrlEncoded>(bindings: $request.body.xwwwUrlEncoded, remove: removeFormData, parseText: parseText, addNew: addNew, deleteAll: deleteAll)
 
     }
     
     func removeFormData(id: UUID) {
-        request.bodyContentTypes.xwwwUrlEncoded = request.bodyContentTypes.xwwwUrlEncoded.filter { binding in
+        request.body.xwwwUrlEncoded = request.body.xwwwUrlEncoded.filter { binding in
             binding.id == id
         }
     }
@@ -190,18 +190,18 @@ struct XWwwFormUrlencodedView: View {
     
     func add(key: String, value: String) {
         
-        request.bodyContentTypes.xwwwUrlEncoded.append(XWWWUrlEncoded(key: key, value: value, enabled: true))
+        request.body.xwwwUrlEncoded.append(XWWWUrlEncoded(key: key, value: value, enabled: true))
             
         // print(xWwwFormUrlencoded)
         
     }
     
     func addNew() {
-        request.bodyContentTypes.xwwwUrlEncoded.append(XWWWUrlEncoded(key: "", value: "", enabled: true))
+        request.body.xwwwUrlEncoded.append(XWWWUrlEncoded(key: "", value: "", enabled: true))
     }
     
     func deleteAll() {
-        request.bodyContentTypes.xwwwUrlEncoded = []
+        request.body.xwwwUrlEncoded = []
     }
   
 
@@ -211,7 +211,7 @@ struct RawView: View {
     @Binding var request: Request
 
     var body: some View {
-        TextEditor(text: $request.bodyContentTypes.raw)
+        TextEditor(text: $request.body.raw)
             .padding(4)
             .border(Color.gray, width: 1)
             .frame(height: 200)
@@ -226,7 +226,7 @@ struct GraphQLView: View {
         HStack {
             VStack(alignment: .leading, spacing: 0) {
                 Text("QUERY")
-                TextEditor(text: $request.bodyContentTypes.graphql.query)
+                TextEditor(text: $request.body.graphql.query)
                     .padding(4)
                     .border(Color.gray, width: 1)
                 .frame(height: 200)
@@ -234,7 +234,7 @@ struct GraphQLView: View {
             
             VStack(alignment: .leading, spacing: 0) {
                 Text("GRAPHQL VARIABLES")
-                TextEditor(text: $request.bodyContentTypes.graphql.variables)
+                TextEditor(text: $request.body.graphql.variables)
                     .padding(4)
                     .border(Color.gray, width: 1)
                 .frame(height: 200)
