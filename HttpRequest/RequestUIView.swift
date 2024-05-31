@@ -12,6 +12,7 @@ import SwiftUI
 let PADDING_TOP: CGFloat = 10.0
 
 struct RequestUIView: View {
+    @Environment(\.modelContext) var modelContext
     @State var url: String = ""
     @State private var selectedTab = 1
     
@@ -53,6 +54,9 @@ struct RequestUIView: View {
                 TextField("Enter URL", text: $request.url)
                 
                 Button(action: {
+                    
+                    modelContext.insert(History(request: request))
+                    
                     loadingHttpRequest = true;
                                                             
                     httpRequest.makeRequest(request: request) { (data: Data?, response: URLResponse?, error: Error?, timeInterval: TimeInterval) in
@@ -102,6 +106,7 @@ struct RequestUIView: View {
 
 #Preview {
     RequestUIView().frame(width: 600, height: 400)
+        .modelContainer(for: [History.self], inMemory: true)
 }
 
 

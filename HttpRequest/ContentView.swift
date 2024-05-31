@@ -41,7 +41,11 @@ struct ContentView: View {
                 TabView(selection: $selectedHistory) {
                     List(histories, selection: $selection) { history in
                         
-                        Text(history.request.url)
+                        NavigationLink {
+                            RequestUIView()
+                        } label: {
+                            Text(history.request.url)
+                        }
                         
                     }.tabItem {
                         Text("History")
@@ -67,14 +71,8 @@ struct ContentView: View {
                                 
                             }
                         }.padding([.trailing, .top, .leading], 4.0)
-                        
-//                        Image(systemName: "plus.circle.fill")
-//                            .onTapGesture(perform: {
-//                                tabs.append(TabItem(name: "Untitled request"))
-//                            }).padding(.trailing, 4.0)
-                        
-                        
-                    }//.padding(.all, 5)
+                                                
+                    }
                     Divider()
                     ScrollView {
                         RequestUIView()
