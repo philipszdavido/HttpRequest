@@ -30,6 +30,7 @@
 		4FDBABDE2C01CDAD00D185C5 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDBABDD2C01CDAD00D185C5 /* Request.swift */; };
 		4FF23B812C071EDF00EB2CC7 /* Body.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF23B802C071EDF00EB2CC7 /* Body.swift */; };
 		4FF23B832C07A66100EB2CC7 /* Collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF23B822C07A66100EB2CC7 /* Collection.swift */; };
+		4FF23B852C09D73800EB2CC7 /* CollectionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF23B842C09D73800EB2CC7 /* CollectionUIView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		4FDBABDD2C01CDAD00D185C5 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		4FF23B802C071EDF00EB2CC7 /* Body.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Body.swift; sourceTree = "<group>"; };
 		4FF23B822C07A66100EB2CC7 /* Collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Collection.swift; sourceTree = "<group>"; };
+		4FF23B842C09D73800EB2CC7 /* CollectionUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionUIView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 				4F4F4F432C0252C000E0972D /* body */,
 				4F4F4F402C02529800E0972D /* authorization */,
 				4F4F4F3A2C02385900E0972D /* response */,
+				4FF23B842C09D73800EB2CC7 /* CollectionUIView.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				4FDBABD62C01132B00D185C5 /* MainView.swift in Sources */,
 				4FF23B832C07A66100EB2CC7 /* Collection.swift in Sources */,
 				4F4F4F362C02129700E0972D /* Authorization.swift in Sources */,
+				4FF23B852C09D73800EB2CC7 /* CollectionUIView.swift in Sources */,
 				4F4F4F472C02530500E0972D /* ParametersUIView.swift in Sources */,
 				4FDBABA72C0112BB00D185C5 /* HttpRequestApp.swift in Sources */,
 				4F4F4F3C2C02387100E0972D /* ResponseUIView.swift in Sources */,

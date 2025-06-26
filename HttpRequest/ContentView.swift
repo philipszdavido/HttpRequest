@@ -51,7 +51,7 @@ struct ContentView: View {
                         Text("History")
                     }.tag(1)
                     
-                    Text("Collection").tabItem { Text("Collections")
+                    CollectionUIView().tabItem { Text("Collections")
                     }.tag(2)
                     
                 }.frame(width: 180)
@@ -115,14 +115,25 @@ struct TabButton: View {
     
     var tab: TabItem
     @Binding var tabs: [TabItem]
+    var selectedTab = false
     
     var body: some View {
-        HStack {
-            Text("\(tab.name)")
+        HStack(alignment: .center) {
             Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
                 tabs.remove(at: tab.id)
             })
-        }.padding(6)
-            .border(Color.black, width: 1).cornerRadius(3.0)
+            Text("\(tab.name)")
+            Spacer().frame(width: 20)
+            Rectangle().foregroundColor(.gray).frame(width: 1.0, height: 10)
+            
+        }
+        .padding(6)
+        
     }
 }
+
+
+//extension View {
+//    func tabSelected() -> some View {
+//    }
+//}
