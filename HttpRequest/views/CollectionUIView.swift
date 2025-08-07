@@ -16,30 +16,22 @@ struct CollectionUIView: View {
     
     var body: some View {
         
-        VStack(alignment: .leading) {
-            Button("Add") {
-                let col = Collection(name: "New collection")
-                modelContext.insert(col)
-            }
-            
-            CollectionsView(collections: collections)
-            
-            Spacer()
-
-        }.sheet(isPresented: $show) {
-            VStack {
-                HStack {
-                    Text("Hello")
-                    
-                    Button("Close") {
-                        show.toggle()
-                    }
-
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Button("Add") {
+                    show = true
                 }
+                
+                CollectionsView(collections: collections)
+                
+                Spacer()
+                
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity)
-        
+        .sheet(isPresented: $show) {
+            NewCollectionView(show: $show)
+        }
         
     }
         
@@ -50,43 +42,48 @@ struct CollectionUIView_Preview: View {
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
-        
-        CollectionUIView().onAppear {
+        NavigationSplitView {
             
-            let urls = [
-                "https://google.com",
-                "https://cnn.com",
-                "https://bbc.com"
-            ]
-            
-            let methods = [
-                "get",
-                "put",
-                "post",
-                "delete",
-                "options"
-            ]
-
-            var request = Request()
-            request.url = urls.randomElement() ?? ""
-            
-            request.method = methods.randomElement() ?? ""
-
-            for _ in 0..<3 {
-                
-                let item = CollectionItem(
-                    type: CollectionItemType.file,
-                    file: File(name: "GET request", request: request)
-                );
-                
-                let collection = Collection(
-                    name: "Swift Collection",
-                    items: [item]
-                );
-
-                modelContext.insert(collection)
-                
-            }
+            CollectionUIView()
+                .onAppear {
+                    
+                    let urls = [
+                        "https://google.com",
+                        "https://cnn.com",
+                        "https://bbc.com"
+                    ]
+                    
+                    let methods = [
+                        "get",
+                        "put",
+                        "post",
+                        "delete",
+                        "options"
+                    ]
+                    
+                    var request = Request()
+                    request.url = urls.randomElement() ?? ""
+                    
+                    request.method = methods.randomElement() ?? ""
+                    
+                    for _ in 0..<3 {
+                        
+                        let item = CollectionItem(
+                            type: CollectionItemType.file,
+                            file: File(name: "GET request", request: request)
+                        );
+                        
+                        let collection = Collection(
+                            name: "Swift Collection",
+                            items: [item]
+                        );
+                        
+                        modelContext.insert(collection)
+                        
+                    }
+                    
+                }
+        } detail: {
             
         }
     }
@@ -137,6 +134,36 @@ struct CollectionsView: View {
         }
     }
     
+    struct FileView: View {
+        
+        var name: String;
+        
+        var body: some View {
+            
+            HStack {
+                Text(name)
+                Spacer()
+                Menu {
+                    Button("Rename", action: rename )
+                    Button(
+                        "Delete",
+                        action: delete)
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .imageScale(.large)
+                        .padding(6)
+                }
+                .menuStyle(.button)
+                .fixedSize()
+            }
+
+        }
+        
+        func rename() {}
+        func delete() {}
+        
+    }
+    
     struct CollectionItem: View {
         
         @State var show: Bool = false;
@@ -151,6 +178,21 @@ struct CollectionsView: View {
                     Image(systemName: "folder")
                     Text(collection.name)
                     
+                    Spacer()
+                    Menu {
+                        Button("Rename", action: rename )
+                        Button(
+                            "Delete",
+                            action: delete)
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .imageScale(.large)
+                            .padding(6)
+                    }
+                    .menuStyle(.button)
+                    .fixedSize()
+
+                    
                 }.onTapGesture {
                         show.toggle()
                 }
@@ -160,7 +202,7 @@ struct CollectionsView: View {
                     ForEach(collection.items) { fileFolder in
                         if fileFolder.type == .file {
                             if let file = fileFolder.file {
-                                Text(file.name).padding()
+                                FileView(name: file.name)
                             }
                         }
                         
@@ -176,6 +218,10 @@ struct CollectionsView: View {
                 
            }
         }
+        
+        func rename() {}
+        func delete() {}
+
     }
     
     var collections: [Collection]
@@ -184,7 +230,38 @@ struct CollectionsView: View {
         
         ForEach(collections) { collection in
             CollectionItem(collection: collection)
-        }//.listStyle(.plain)
+        }
 
+    }
+}
+
+struct NewCollectionView: View {
+
+    @Environment(\.modelContext) var modelContext
+
+    @Binding var show: Bool;
+    @State var text: String = ""
+    
+    var body: some View {
+        VStack {
+                
+            Text("Add new collection")
+            
+            TextField(text: $text) {}
+                
+            HStack {
+
+                Button("Close") {
+                    show.toggle()
+                }
+
+                Button("Add") {
+                    let col = Collection(name: text)
+                    modelContext.insert(col)
+                    show = false
+                }
+
+            }
+        }.padding()
     }
 }
