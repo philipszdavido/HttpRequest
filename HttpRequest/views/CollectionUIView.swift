@@ -6,50 +6,185 @@
 //
 
 import SwiftUI
-
-struct FileItem: Hashable, Identifiable, CustomStringConvertible {
-    var id: Self { self }
-    var name: String
-    var children: [FileItem]? = nil
-    var description: String {
-        switch children {
-        case nil:
-            return "📄 \(name)"
-        case .some(let children):
-            return children.isEmpty ? "📂 \(name)" : "📁 \(name)"
-        }
-    }
-}
-
-let data =
-  FileItem(name: "users", children:
-    [FileItem(name: "user1234", children:
-      [FileItem(name: "Photos", children:
-        [FileItem(name: "photo001.jpg"),
-         FileItem(name: "photo002.jpg")]),
-       FileItem(name: "Movies", children:
-         [FileItem(name: "movie001.mp4")]),
-          FileItem(name: "Documents", children: [])
-      ]),
-     FileItem(name: "newuser", children:
-       [FileItem(name: "Documents", children: [])
-       ])
-    ])
+import SwiftData
 
 struct CollectionUIView: View {
+    
+    @State var show = false
+    @Query var collections: [Collection]
+    @Environment(\.modelContext) var modelContext
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
         
+        VStack(alignment: .leading) {
+            Button("Add") {
+                let col = Collection(name: "New collection")
+                modelContext.insert(col)
+            }
+            
+            CollectionsView(collections: collections)
+            
+            Spacer()
 
-        OutlineGroup(data, children: \.children) { item in
-            Text("\(item.description)")
+        }.sheet(isPresented: $show) {
+            VStack {
+                HStack {
+                    Text("Hello")
+                    
+                    Button("Close") {
+                        show.toggle()
+                    }
+
+                }
+            }
         }
+        .frame(maxWidth: .infinity)
         
-        Spacer()
         
+    }
+        
+}
+
+struct CollectionUIView_Preview: View {
+
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        
+        CollectionUIView().onAppear {
+            
+            let urls = [
+                "https://google.com",
+                "https://cnn.com",
+                "https://bbc.com"
+            ]
+            
+            let methods = [
+                "get",
+                "put",
+                "post",
+                "delete",
+                "options"
+            ]
+
+            var request = Request()
+            request.url = urls.randomElement() ?? ""
+            
+            request.method = methods.randomElement() ?? ""
+
+            for _ in 0..<3 {
+                
+                let item = CollectionItem(
+                    type: CollectionItemType.file,
+                    file: File(name: "GET request", request: request)
+                );
+                
+                let collection = Collection(
+                    name: "Swift Collection",
+                    items: [item]
+                );
+
+                modelContext.insert(collection)
+                
+            }
+            
+        }
     }
 }
 
 #Preview {
-    CollectionUIView()
+    CollectionUIView_Preview()
+        .modelContainer(for: Collection.self, inMemory: true)
+}
+
+
+struct CollectionsView: View {
+    
+    struct FolderView: View {
+        
+        @State var show: Bool = false;
+        var folder: Folder;
+        
+        var body: some View {
+            
+            HStack {
+                
+                Image(systemName: show ? "chevron.down" : "chevron.right")
+                
+                Image(systemName: "folder")
+                Text(folder.name)
+            }.onTapGesture {
+                show.toggle()
+            }
+            
+            if show {
+                ForEach(folder.items) { fileFolder in
+                    
+                    if fileFolder.type == .file {
+                        if let file = fileFolder.file {
+                            Text(file.name)
+                        }
+                    }
+                    
+                    if fileFolder.type == .folder {
+                        if let folder = fileFolder.folder {
+                            FolderView(folder: folder)
+                        }
+                    }
+                    
+                }
+            }
+        }
+    }
+    
+    struct CollectionItem: View {
+        
+        @State var show: Bool = false;
+        var collection: Collection
+        
+        var body: some View {
+            VStack {
+                HStack {
+                    
+                    Image(systemName: show ? "chevron.down" : "chevron.right")
+
+                    Image(systemName: "folder")
+                    Text(collection.name)
+                    
+                }.onTapGesture {
+                        show.toggle()
+                }
+                
+                if show {
+                    
+                    ForEach(collection.items) { fileFolder in
+                        if fileFolder.type == .file {
+                            if let file = fileFolder.file {
+                                Text(file.name).padding()
+                            }
+                        }
+                        
+                        if fileFolder.type == .folder {
+                            if let folder = fileFolder.folder {
+                                FolderView(folder: folder)
+                            }
+                        }
+                        
+                    }
+                    
+                }
+                
+           }
+        }
+    }
+    
+    var collections: [Collection]
+    
+    var body: some View {
+        
+        ForEach(collections) { collection in
+            CollectionItem(collection: collection)
+        }//.listStyle(.plain)
+
+    }
 }

@@ -13,17 +13,16 @@ let PADDING_TOP: CGFloat = 10.0
 
 struct RequestUIView: View {
     @Environment(\.modelContext) var modelContext
+
     @State var url: String = ""
-    @State private var selectedTab = 1
+    @State public var selectedTab = 1
+    @State public var request = Request()
+    @State public var method = "GET"
     
     let httpRequest = HttpService()
-    @State private var request = Request()
-    @ObservedObject var responseObject = Response()
-    
     @State private var loadingHttpRequest = false
-    
-    @State private var method = "GET"
-    
+    @ObservedObject var responseObject = Response()
+
     var body: some View {
         VStack {
             

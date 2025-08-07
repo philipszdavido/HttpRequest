@@ -23,38 +23,32 @@ struct ContentView: View {
     @State private var tabs: [TabItem] = [
         TabItem(name: "POST history")
     ]
-        
-    @State var selectedHistory: String = "";
     
-    @State private var selectedItem: History?
-    
-    @Query private var histories: [History]
-    
-    @State private var selection = Set<History>()
-    
+    @State private var selectedTab: String = ""
         
     var body: some View {
-        //HStack {
+
         NavigationSplitView {
             
             Section {
-                TabView(selection: $selectedHistory) {
-                    List(histories, selection: $selection) { history in
-                        
-                        NavigationLink {
-                            RequestUIView()
-                        } label: {
-                            Text(history.request.url)
-                        }
-                        
-                    }.tabItem {
+                TabView {
+                    
+                    HistoryView().tabItem {
                         Text("History")
                     }.tag(1)
-                    
-                    CollectionUIView().tabItem { Text("Collections")
+                                        
+                    CollectionUIView()
+                        .tabItem {
+                            Text("Collections")
                     }.tag(2)
                     
-                }.frame(width: 180)
+                    Text("Env")
+                        .tabItem {
+                            Text("Env")
+                        }
+                        .tag(3)
+                    
+                }.frame(width: .infinity)
             }.padding(.all, 4)
             
             
@@ -97,18 +91,11 @@ struct ContentView: View {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(histories[index])
+                // modelContext.delete(histories[index])
             }
         }
     }
 
-}
-
-
-#Preview {
-    ContentView()
-        .modelContainer(for: History.self, inMemory: true)
-        
 }
 
 struct TabButton: View {
@@ -116,24 +103,78 @@ struct TabButton: View {
     var tab: TabItem
     @Binding var tabs: [TabItem]
     var selectedTab = false
+    @State private var showXmar = false
     
     var body: some View {
         HStack(alignment: .center) {
-            Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
-                tabs.remove(at: tab.id)
-            })
+            
             Text("\(tab.name)")
             Spacer().frame(width: 20)
+
+            if showXmar {
+                Image(systemName: "xmark.circle.fill").foregroundStyle(Color.gray).onTapGesture(perform: {
+                    tabs.remove(at: tab.id)
+                })
+            }
+
             Rectangle().foregroundColor(.gray).frame(width: 1.0, height: 10)
-            
+
         }
         .padding(6)
+        .onHover { event in
+            showXmar = event
+        }
         
     }
 }
 
+struct ContentView_Preview: View {
+    @Environment(\.modelContext) private var modelContext
+    @State private var selection = Set<History>()
+    
+    let urls = [
+        "https://google.com",
+        "https://cnn.com",
+        "https://bbc.com"
+    ]
+    
+    let methods = [
+        "get",
+        "put",
+        "post",
+        "delete",
+        "options"
+    ]
+    
+    var body: some View {
+        ContentView()
+            .modelContainer(for: [History.self, Collection.self], inMemory: true)
+        
+            .onAppear {
+                
+                var set: Set = [
+                    History(
+                        request: Request()
+                    )
+                ]
+                
+                for _ in 0..<3 {
+                    
+                    var request = Request()
+                    request.url = urls.randomElement() ?? ""
+                    
+                    request.method = methods.randomElement() ?? ""
+                    modelContext.insert(
+                        History( request: request )
+                    )
+                }
+                
+            }
+    }
+}
 
-//extension View {
-//    func tabSelected() -> some View {
-//    }
-//}
+#Preview {
+    ContentView_Preview()
+        .modelContainer(for: [History.self, Collection.self], inMemory: true)
+}
+

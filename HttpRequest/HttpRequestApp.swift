@@ -12,9 +12,11 @@ import SwiftData
 struct HttpRequestApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
             History.self,
-            Collection.self
+            Collection.self,
+            CollectionItem.self,
+            File.self,
+            Folder.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
