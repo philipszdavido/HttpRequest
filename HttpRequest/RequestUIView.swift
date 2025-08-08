@@ -38,7 +38,8 @@ struct RequestUIView: View {
                         method = "GET"
                         request.method = method
                     }) {
-                        Text("GET").foregroundColor(.blue)
+                        Text("GET")
+                            .foregroundStyle(methodColor(method: "GET"))
                     }
                     
                     Button(action: {
@@ -47,6 +48,28 @@ struct RequestUIView: View {
                     }) {
                         Text("POST").foregroundColor(.yellow)
                     }
+                    
+                    Button(action: {
+                        method = "PUT"
+                        request.method = method
+                    }) {
+                        Text("PUT").foregroundColor(.orange)
+                    }
+
+                    Button(action: {
+                        method = "DELETE"
+                        request.method = method
+                    }) {
+                        Text("DELETE").foregroundColor(.red)
+                    }
+
+                    Button(action: {
+                        method = "OPTIONS"
+                        request.method = method
+                    }) {
+                        Text("OPTIONS").foregroundColor(.pink)
+                    }
+
                 }
                 .frame(width: 100)
 

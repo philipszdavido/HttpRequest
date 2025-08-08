@@ -102,39 +102,44 @@ struct SaveToCollectionView: View {
     @Environment(\.modelContext) private var modelContext
 
     @Query private var collections: [Collection]
-    
     @State private var selectedCollection: Collection?
+
     @State private var title: String = ""
     
     var history: History;
     var cancelAction: () -> Void
 
     var body: some View {
+        
         VStack(alignment: HorizontalAlignment.leading) {
+            
             HStack {
                 Text("Save to collection")
                     .font(.title)
-            }
+            }.padding()
             
-            TextField(text: $title) {}
+            TextField(text: $title) {
+                Text("Enter request name...")
+            }.padding(.horizontal)
             
-            GroupBox(label:
-                    Label("All Collections", systemImage: "building.columns")
-            ) {
-                ForEach(collections) { collection in
-                    HStack {
-                        Image(systemName: "folder")
-                        Text(collection.name)
-                    }
-                    .padding()
-                    .background(
-                        collection.id.uuidString == selectedCollection?.id.uuidString ? .blue : .yellow
-                    )
-                    .onTapGesture {
-                        selectedCollection = collection;
+            Divider()
+            
+            VStack(alignment: HorizontalAlignment.leading) {
+                
+                Text("All Collections")
+                
+                ScrollView {
+                    ForEach(collections) { collection in
+                        CollectionItemSheetView(
+                            collection: collection,
+                            selectedCollection: $selectedCollection
+                        )
                     }
                 }
-            }
+
+            }.padding()
+                        
+            Divider()
             
             HStack {
                 Button {
@@ -149,8 +154,16 @@ struct SaveToCollectionView: View {
                     Text("Save")
                 }
                 
+            }.padding()
+        }
+        .onAppear {
+#if DEBUG
+            for _ in 0..<10 {
+                modelContext.insert(Collection(name: "hello"))
             }
-        }.padding()
+#endif
+        }
+        
     }
     
     func saveAction() {
@@ -172,10 +185,43 @@ struct SaveToCollectionView: View {
     }
 }
 
+struct CollectionItemSheetView: View {
+    
+    var collection: Collection;
+    @Binding var selectedCollection: Collection?
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "folder")
+            Text(collection.name)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 10)
+        .padding(.horizontal)
+        .background(
+            collection.id == selectedCollection?.id
+            ? RoundedRectangle(cornerRadius: 6)
+                .fill(Color.accentColor.opacity(0.3))
+            : RoundedRectangle(cornerRadius: 6)
+                .fill(Color.clear)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+        )
+        .contentShape(Rectangle())
+        .onTapGesture {
+            selectedCollection = collection
+        }
+    }
+}
+
 #Preview {
-    SaveToCollectionView(history: History(request: Request()), cancelAction: {})
+    ScrollView {
+        SaveToCollectionView(history: History(request: Request()), cancelAction: {})
+    }
         .modelContainer(for: Collection.self, inMemory: true)
-        .frame(width: 400, height: 100)
+        .frame(width: 400, height: 400)
 }
 
 struct HistoryView_Preview: View {

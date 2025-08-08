@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftData
 
+let LEFT_PADDING: CGFloat = 20;
+
 struct CollectionUIView: View {
     
     @State var show = false
@@ -45,6 +47,7 @@ struct CollectionUIView_Preview: View {
         NavigationSplitView {
             
             CollectionUIView()
+                .frame(width: 300)
                 .onAppear {
                     
                     let urls = [
@@ -60,21 +63,20 @@ struct CollectionUIView_Preview: View {
                         "delete",
                         "options"
                     ]
-                    
-                    var request = Request()
-                    request.url = urls.randomElement() ?? ""
-                    
-                    request.method = methods.randomElement() ?? ""
-                    
-                    for _ in 0..<3 {
+                                        
+                    for index in 0..<3 {
+                        var request = Request()
+                        request.url = urls.randomElement() ?? ""
                         
+                        request.method = methods.randomElement() ?? ""
+
                         let item = CollectionItem(
                             type: CollectionItemType.file,
                             file: File(name: "GET request", request: request)
                         );
                         
                         let collection = Collection(
-                            name: "Swift Collection",
+                            name: "Swift Collection " + index.description,
                             items: [item]
                         );
                         
@@ -92,176 +94,4 @@ struct CollectionUIView_Preview: View {
 #Preview {
     CollectionUIView_Preview()
         .modelContainer(for: Collection.self, inMemory: true)
-}
-
-
-struct CollectionsView: View {
-    
-    struct FolderView: View {
-        
-        @State var show: Bool = false;
-        var folder: Folder;
-        
-        var body: some View {
-            
-            HStack {
-                
-                Image(systemName: show ? "chevron.down" : "chevron.right")
-                
-                Image(systemName: "folder")
-                Text(folder.name)
-            }.onTapGesture {
-                show.toggle()
-            }
-            
-            if show {
-                ForEach(folder.items) { fileFolder in
-                    
-                    if fileFolder.type == .file {
-                        if let file = fileFolder.file {
-                            Text(file.name)
-                        }
-                    }
-                    
-                    if fileFolder.type == .folder {
-                        if let folder = fileFolder.folder {
-                            FolderView(folder: folder)
-                        }
-                    }
-                    
-                }
-            }
-        }
-    }
-    
-    struct FileView: View {
-        
-        var name: String;
-        
-        var body: some View {
-            
-            HStack {
-                Text(name)
-                Spacer()
-                Menu {
-                    Button("Rename", action: rename )
-                    Button(
-                        "Delete",
-                        action: delete)
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .imageScale(.large)
-                        .padding(6)
-                }
-                .menuStyle(.button)
-                .fixedSize()
-            }
-
-        }
-        
-        func rename() {}
-        func delete() {}
-        
-    }
-    
-    struct CollectionItem: View {
-        
-        @State var show: Bool = false;
-        var collection: Collection
-        
-        var body: some View {
-            VStack {
-                HStack {
-                    
-                    Image(systemName: show ? "chevron.down" : "chevron.right")
-
-                    Image(systemName: "folder")
-                    Text(collection.name)
-                    
-                    Spacer()
-                    Menu {
-                        Button("Rename", action: rename )
-                        Button(
-                            "Delete",
-                            action: delete)
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .imageScale(.large)
-                            .padding(6)
-                    }
-                    .menuStyle(.button)
-                    .fixedSize()
-
-                    
-                }.onTapGesture {
-                        show.toggle()
-                }
-                
-                if show {
-                    
-                    ForEach(collection.items) { fileFolder in
-                        if fileFolder.type == .file {
-                            if let file = fileFolder.file {
-                                FileView(name: file.name)
-                            }
-                        }
-                        
-                        if fileFolder.type == .folder {
-                            if let folder = fileFolder.folder {
-                                FolderView(folder: folder)
-                            }
-                        }
-                        
-                    }
-                    
-                }
-                
-           }
-        }
-        
-        func rename() {}
-        func delete() {}
-
-    }
-    
-    var collections: [Collection]
-    
-    var body: some View {
-        
-        ForEach(collections) { collection in
-            CollectionItem(collection: collection)
-        }
-
-    }
-}
-
-struct NewCollectionView: View {
-
-    @Environment(\.modelContext) var modelContext
-
-    @Binding var show: Bool;
-    @State var text: String = ""
-    
-    var body: some View {
-        VStack {
-                
-            Text("Add new collection")
-            
-            TextField(text: $text) {}
-                
-            HStack {
-
-                Button("Close") {
-                    show.toggle()
-                }
-
-                Button("Add") {
-                    let col = Collection(name: text)
-                    modelContext.insert(col)
-                    show = false
-                }
-
-            }
-        }.padding()
-    }
 }
